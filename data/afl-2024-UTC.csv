@@ -1,0 +1,217 @@
+Match Number,Round Number,Date,Location,Home Team,Away Team,Result
+1,OR,07/03/2024 08:30,SCG,Sydney Swans,Melbourne,86 - 64
+2,OR,08/03/2024 08:40,Gabba,Brisbane Lions,Carlton,85 - 86
+3,OR,09/03/2024 05:20,People First Stadium,Gold Coast Suns,Richmond,99 - 60
+4,OR,09/03/2024 08:30,ENGIE Stadium,GWS Giants,Collingwood,114 - 82
+5,1,14/03/2024 08:30,MCG,Carlton,Richmond,86 - 81
+6,1,15/03/2024 08:40,MCG,Collingwood,Sydney Swans,69 - 102
+7,1,16/03/2024 02:45,MCG,Essendon,Hawthorn,107 - 83
+8,1,16/03/2024 05:35,ENGIE Stadium,GWS Giants,North Melbourne,121 - 82
+9,1,16/03/2024 08:30,GMHBA Stadium,Geelong Cats,St Kilda,76 - 68
+10,1,16/03/2024 09:10,People First Stadium,Gold Coast Suns,Adelaide Crows,60 - 54
+11,1,17/03/2024 02:00,MCG,Melbourne,Western Bulldogs,109 - 64
+12,1,17/03/2024 05:00,Adelaide Oval,Port Adelaide,West Coast Eagles,120 - 70
+13,1,17/03/2024 07:50,Optus Stadium,Fremantle,Brisbane Lions,93 - 70
+14,2,21/03/2024 08:30,MCG,St Kilda,Collingwood,94 - 79
+15,2,22/03/2024 08:40,Adelaide Oval,Adelaide Crows,Geelong Cats,77 - 96
+16,2,23/03/2024 02:45,Marvel Stadium,North Melbourne,Fremantle,76 - 102
+17,2,23/03/2024 05:35,MCG,Hawthorn,Melbourne,38 - 93
+18,2,23/03/2024 08:30,SCG,Sydney Swans,Essendon,131 - 101
+19,2,24/03/2024 02:00,Mars Stadium,Western Bulldogs,Gold Coast Suns,115 - 67
+20,2,24/03/2024 05:00,MCG,Richmond,Port Adelaide,92 - 122
+21,2,24/03/2024 07:50,Optus Stadium,West Coast Eagles,GWS Giants,43 - 108
+22,3,28/03/2024 08:30,Gabba,Brisbane Lions,Collingwood,72 - 92
+23,3,29/03/2024 05:20,Marvel Stadium,North Melbourne,Carlton,81 - 137
+24,3,29/03/2024 08:30,Optus Stadium,Fremantle,Adelaide Crows,69 - 34
+25,3,30/03/2024 05:20,Marvel Stadium,Essendon,St Kilda,71 - 67
+26,3,30/03/2024 08:30,Adelaide Oval,Port Adelaide,Melbourne,89 - 96
+27,3,31/03/2024 02:00,Marvel Stadium,Western Bulldogs,West Coast Eagles,106 - 30
+28,3,31/03/2024 05:00,MCG,Richmond,Sydney Swans,82 - 77
+29,3,01/04/2024 04:20,MCG,Hawthorn,Geelong Cats,70 - 106
+30,4,04/04/2024 08:40,Adelaide Oval,Adelaide Crows,Melbourne,63 - 78
+31,4,05/04/2024 06:10,Norwood Oval,Brisbane Lions,North Melbourne,112 - 42
+32,4,05/04/2024 09:10,Adelaide Oval,Port Adelaide,Essendon,111 - 42
+33,4,06/04/2024 02:30,Adelaide Hills,West Coast Eagles,Sydney Swans,78 - 104
+34,4,06/04/2024 05:20,Adelaide Oval,Fremantle,Carlton,63 - 73
+35,4,06/04/2024 09:10,Adelaide Oval,Western Bulldogs,Geelong Cats,91 - 95
+36,4,07/04/2024 02:30,Adelaide Hills,Gold Coast Suns,GWS Giants,89 - 117
+37,4,07/04/2024 05:20,Norwood Oval,Richmond,St Kilda,60 - 67
+38,4,07/04/2024 07:10,Adelaide Oval,Collingwood,Hawthorn,77 - 72
+39,5,11/04/2024 09:30,MCG,Melbourne,Brisbane Lions,60 - 82
+40,5,12/04/2024 09:40,Marvel Stadium,Western Bulldogs,Essendon,67 - 96
+41,5,13/04/2024 03:45,Manuka Oval,GWS Giants,St Kilda,80 - 79
+42,5,13/04/2024 06:35,Marvel Stadium,Carlton,Adelaide Crows,98 - 100
+43,5,13/04/2024 09:30,People First Stadium,Gold Coast Suns,Hawthorn,109 - 56
+44,5,13/04/2024 09:30,Adelaide Oval,Port Adelaide,Fremantle,66 - 63
+45,5,14/04/2024 03:00,GMHBA Stadium,Geelong Cats,North Melbourne,139 - 64
+46,5,14/04/2024 06:00,Optus Stadium,West Coast Eagles,Richmond,109 - 70
+47,6,18/04/2024 09:30,Marvel Stadium,St Kilda,Western Bulldogs,64 - 124
+48,6,19/04/2024 09:40,Adelaide Oval,Adelaide Crows,Essendon,75 - 78
+49,6,20/04/2024 03:45,MCG,Collingwood,Port Adelaide,123 - 81
+50,6,20/04/2024 06:35,Marvel Stadium,Carlton,GWS Giants,117 - 98
+51,6,20/04/2024 09:30,Gabba,Brisbane Lions,Geelong Cats,37 - 63
+52,6,20/04/2024 10:10,Optus Stadium,West Coast Eagles,Fremantle,105 - 68
+53,6,21/04/2024 03:05,SCG,Sydney Swans,Gold Coast Suns,110 - 57
+54,6,21/04/2024 06:05,Marvel Stadium,North Melbourne,Hawthorn,68 - 113
+55,7,24/04/2024 09:25,MCG,Richmond,Melbourne,42 - 85
+56,7,25/04/2024 05:20,MCG,Essendon,Collingwood,85 - 85
+57,7,25/04/2024 09:35,Manuka Oval,GWS Giants,Brisbane Lions,113 - 59
+58,7,26/04/2024 09:40,Adelaide Oval,Port Adelaide,St Kilda,82 - 72
+59,7,27/04/2024 03:45,Blundstone Arena,North Melbourne,Adelaide Crows,81 - 138
+60,7,27/04/2024 06:35,MCG,Geelong Cats,Carlton,118 - 105
+61,7,27/04/2024 09:40,Optus Stadium,Fremantle,Western Bulldogs,95 - 71
+62,7,28/04/2024 03:00,People First Stadium,Gold Coast Suns,West Coast Eagles,112 - 75
+63,7,28/04/2024 06:00,MCG,Hawthorn,Sydney Swans,42 - 118
+64,8,02/05/2024 09:30,Adelaide Oval,Adelaide Crows,Port Adelaide,78 - 48
+65,8,03/05/2024 09:40,MCG,Carlton,Collingwood,79 - 85
+66,8,04/05/2024 03:45,SCG,Sydney Swans,GWS Giants,98 - 69
+67,8,04/05/2024 06:35,Marvel Stadium,St Kilda,North Melbourne,103 - 65
+68,8,04/05/2024 09:30,MCG,Melbourne,Geelong Cats,74 - 66
+69,8,04/05/2024 10:10,Optus Stadium,West Coast Eagles,Essendon,71 - 77
+70,8,05/05/2024 03:00,MCG,Richmond,Fremantle,49 - 103
+71,8,05/05/2024 06:00,Marvel Stadium,Western Bulldogs,Hawthorn,91 - 98
+72,8,05/05/2024 09:10,Gabba,Brisbane Lions,Gold Coast Suns,79 - 45
+73,9,09/05/2024 09:30,MCG,Carlton,Melbourne,77 - 76
+74,9,10/05/2024 09:10,GMHBA Stadium,Geelong Cats,Port Adelaide,95 - 101
+75,9,10/05/2024 10:30,Optus Stadium,Fremantle,Sydney Swans,39 - 87
+76,9,11/05/2024 03:45,UTAS Stadium,Hawthorn,St Kilda,58 - 53
+77,9,11/05/2024 06:35,Marvel Stadium,Essendon,GWS Giants,82 - 62
+78,9,11/05/2024 09:30,MCG,Richmond,Western Bulldogs,42 - 133
+79,9,11/05/2024 09:30,TIO Stadium,Gold Coast Suns,North Melbourne,120 - 52
+80,9,12/05/2024 03:00,Marvel Stadium,Collingwood,West Coast Eagles,103 - 37
+81,9,12/05/2024 06:00,Adelaide Oval,Adelaide Crows,Brisbane Lions,90 - 90
+82,10,16/05/2024 09:30,TIO Stadium,Gold Coast Suns,Geelong Cats,164 - 100
+83,10,17/05/2024 09:40,SCG,Sydney Swans,Carlton,117 - 65
+84,10,18/05/2024 03:45,MCG,Collingwood,Adelaide Crows,78 - 74
+85,10,18/05/2024 06:35,ENGIE Stadium,GWS Giants,Western Bulldogs,43 - 70
+86,10,18/05/2024 09:30,Marvel Stadium,St Kilda,Fremantle,55 - 72
+87,10,18/05/2024 09:30,Gabba,Brisbane Lions,Richmond,163 - 44
+88,10,19/05/2024 03:10,Marvel Stadium,Essendon,North Melbourne,106 - 66
+89,10,19/05/2024 05:20,Adelaide Oval,Port Adelaide,Hawthorn,80 - 79
+90,10,19/05/2024 08:20,Optus Stadium,West Coast Eagles,Melbourne,105 - 70
+91,11,23/05/2024 09:30,Marvel Stadium,Western Bulldogs,Sydney Swans,88 - 102
+92,11,24/05/2024 10:10,Optus Stadium,Fremantle,Collingwood,75 - 75
+93,11,25/05/2024 03:45,Blundstone Arena,North Melbourne,Port Adelaide,48 - 107
+94,11,25/05/2024 03:45,Marvel Stadium,Carlton,Gold Coast Suns,102 - 73
+95,11,25/05/2024 06:35,GMHBA Stadium,Geelong Cats,GWS Giants,74 - 78
+96,11,25/05/2024 09:40,MCG,Richmond,Essendon,74 - 86
+97,11,26/05/2024 03:10,Marvel Stadium,Hawthorn,Brisbane Lions,100 - 75
+98,11,26/05/2024 05:20,MCG,Melbourne,St Kilda,100 - 62
+99,11,26/05/2024 06:40,Adelaide Oval,Adelaide Crows,West Coast Eagles,137 - 38
+100,12,30/05/2024 09:30,Adelaide Oval,Port Adelaide,Carlton,71 - 107
+101,12,31/05/2024 09:40,Marvel Stadium,Collingwood,Western Bulldogs,82 - 100
+102,12,01/06/2024 03:45,MCG,Hawthorn,Adelaide Crows,107 - 80
+103,12,01/06/2024 06:35,Optus Stadium,West Coast Eagles,St Kilda,68 - 82
+104,12,01/06/2024 09:30,GMHBA Stadium,Geelong Cats,Richmond,99 - 69
+105,12,02/06/2024 03:00,TIO Traeger Park,Melbourne,Fremantle,49 - 141
+106,12,02/06/2024 06:00,People First Stadium,Gold Coast Suns,Essendon,91 - 80
+107,13,06/06/2024 09:30,Adelaide Oval,Adelaide Crows,Richmond,71 - 79
+108,13,07/06/2024 09:40,Marvel Stadium,Western Bulldogs,Brisbane Lions,71 - 114
+109,13,08/06/2024 03:45,UTAS Stadium,Hawthorn,GWS Giants,85 - 79
+110,13,08/06/2024 06:35,Optus Stadium,West Coast Eagles,North Melbourne,65 - 74
+111,13,08/06/2024 09:30,Marvel Stadium,St Kilda,Gold Coast Suns,51 - 48
+112,13,09/06/2024 05:20,SCG,Sydney Swans,Geelong Cats,112 - 82
+113,13,09/06/2024 09:20,MCG,Essendon,Carlton,70 - 96
+114,13,10/06/2024 05:20,MCG,Collingwood,Melbourne,89 - 51
+115,14,14/06/2024 09:40,Gabba,Brisbane Lions,St Kilda,126 - 106
+116,14,15/06/2024 03:45,Marvel Stadium,Western Bulldogs,Fremantle,149 - 82
+117,14,15/06/2024 06:35,MCG,Richmond,Hawthorn,49 - 97
+118,14,15/06/2024 09:30,Adelaide Oval,Adelaide Crows,Sydney Swans,67 - 109
+119,14,16/06/2024 03:00,Marvel Stadium,North Melbourne,Collingwood,118 - 119
+120,14,16/06/2024 06:00,ENGIE Stadium,GWS Giants,Port Adelaide,73 - 51
+121,15,21/06/2024 09:40,MCG,Carlton,Geelong Cats,138 - 75
+122,15,22/06/2024 03:45,Adelaide Oval,Port Adelaide,Brisbane Lions,73 - 152
+123,15,22/06/2024 06:35,ENGIE Stadium,GWS Giants,Sydney Swans,75 - 102
+124,15,22/06/2024 09:30,MCG,Melbourne,North Melbourne,70 - 67
+125,15,23/06/2024 03:00,Marvel Stadium,Essendon,West Coast Eagles,122 - 92
+126,15,23/06/2024 06:00,Optus Stadium,Fremantle,Gold Coast Suns,85 - 65
+127,16,28/06/2024 09:40,Gabba,Brisbane Lions,Melbourne,86 - 81
+130,16,29/06/2024 03:45,Marvel Stadium,North Melbourne,Western Bulldogs,60 - 77
+133,16,29/06/2024 03:45,SCG,Sydney Swans,Fremantle,98 - 99
+129,16,29/06/2024 06:35,People First Stadium,Gold Coast Suns,Collingwood,101 - 90
+128,16,29/06/2024 09:30,MCG,Geelong Cats,Essendon,105 - 60
+134,16,29/06/2024 09:30,Adelaide Oval,Adelaide Crows,GWS Giants,94 - 78
+132,16,30/06/2024 03:10,Marvel Stadium,St Kilda,Port Adelaide,60 - 62
+131,16,30/06/2024 05:20,MCG,Richmond,Carlton,70 - 131
+135,16,30/06/2024 06:40,Optus Stadium,West Coast Eagles,Hawthorn,33 - 94
+137,17,05/07/2024 09:40,MCG,Collingwood,Essendon,80 - 92
+141,17,06/07/2024 03:45,Marvel Stadium,North Melbourne,Gold Coast Suns,87 - 83
+143,17,06/07/2024 03:45,Adelaide Oval,Port Adelaide,Western Bulldogs,102 - 54
+138,17,06/07/2024 06:35,GMHBA Stadium,Geelong Cats,Hawthorn,110 - 59
+139,17,06/07/2024 09:30,ENGIE Stadium,GWS Giants,Carlton,116 - 104
+144,17,06/07/2024 10:10,Optus Stadium,Fremantle,Richmond,105 - 54
+140,17,07/07/2024 03:10,MCG,Melbourne,West Coast Eagles,112 - 58
+142,17,07/07/2024 05:20,Marvel Stadium,St Kilda,Sydney Swans,84 - 82
+136,17,07/07/2024 06:10,Gabba,Brisbane Lions,Adelaide Crows,97 - 86
+145,18,12/07/2024 09:40,MCG,Collingwood,Geelong Cats,71 - 91
+147,18,13/07/2024 03:45,UTAS Stadium,Hawthorn,Fremantle,87 - 74
+150,18,13/07/2024 03:45,SCG,Sydney Swans,North Melbourne,138 - 59
+151,18,13/07/2024 06:35,Marvel Stadium,Western Bulldogs,Carlton,100 - 86
+148,18,13/07/2024 09:30,MCG,Melbourne,Essendon,84 - 67
+152,18,13/07/2024 09:30,Adelaide Oval,Adelaide Crows,St Kilda,71 - 39
+146,18,14/07/2024 03:10,People First Stadium,Gold Coast Suns,Port Adelaide,96 - 82
+149,18,14/07/2024 05:20,MCG,Richmond,GWS Giants,84 - 108
+153,18,14/07/2024 06:40,Optus Stadium,West Coast Eagles,Brisbane Lions,93 - 106
+156,19,19/07/2024 09:40,Marvel Stadium,Essendon,Adelaide Crows,113 - 115
+158,19,20/07/2024 03:45,ENGIE Stadium,GWS Giants,Gold Coast Suns,89 - 50
+160,19,20/07/2024 03:45,Marvel Stadium,St Kilda,West Coast Eagles,113 - 41
+159,19,20/07/2024 06:35,MCG,Hawthorn,Collingwood,133 - 67
+157,19,20/07/2024 09:30,GMHBA Stadium,Geelong Cats,Western Bulldogs,48 - 95
+161,19,20/07/2024 09:30,Adelaide Oval,Port Adelaide,Richmond,116 - 75
+154,19,21/07/2024 03:10,Gabba,Brisbane Lions,Sydney Swans,79 - 77
+162,19,21/07/2024 05:20,Optus Stadium,Fremantle,Melbourne,116 - 66
+155,19,21/07/2024 06:40,Marvel Stadium,Carlton,North Melbourne,107 - 88
+163,20,26/07/2024 09:40,Marvel Stadium,Carlton,Port Adelaide,65 - 79
+167,20,27/07/2024 03:45,Blundstone Arena,North Melbourne,Geelong Cats,66 - 106
+165,20,27/07/2024 06:35,People First Stadium,Gold Coast Suns,Brisbane Lions,65 - 93
+168,20,27/07/2024 06:35,Marvel Stadium,St Kilda,Essendon,108 - 55
+166,20,27/07/2024 09:30,MCG,Melbourne,GWS Giants,83 - 85
+171,20,27/07/2024 10:10,Optus Stadium,Fremantle,West Coast Eagles,110 - 75
+164,20,28/07/2024 03:10,MCG,Collingwood,Richmond,93 - 67
+169,20,28/07/2024 05:20,SCG,Sydney Swans,Western Bulldogs,48 - 87
+170,20,28/07/2024 06:10,Adelaide Oval,Adelaide Crows,Hawthorn,58 - 124
+178,21,02/08/2024 09:15,Marvel Stadium,Western Bulldogs,Melbourne,110 - 59
+180,21,02/08/2024 10:30,Optus Stadium,West Coast Eagles,Gold Coast Suns,97 - 87
+176,21,03/08/2024 03:45,Marvel Stadium,North Melbourne,Richmond,90 - 77
+174,21,03/08/2024 06:35,GMHBA Stadium,Geelong Cats,Adelaide Crows,90 - 85
+172,21,03/08/2024 09:30,MCG,Collingwood,Carlton,84 - 81
+179,21,03/08/2024 09:30,Adelaide Oval,Port Adelaide,Sydney Swans,148 - 36
+175,21,04/08/2024 03:10,Manuka Oval,GWS Giants,Hawthorn,84 - 82
+173,21,04/08/2024 05:20,MCG,Essendon,Fremantle,90 - 89
+177,21,04/08/2024 06:40,Marvel Stadium,St Kilda,Brisbane Lions,39 - 124
+187,22,09/08/2024 09:40,SCG,Sydney Swans,Collingwood,89 - 86
+181,22,10/08/2024 03:45,Gabba,Brisbane Lions,GWS Giants,64 - 82
+185,22,10/08/2024 03:45,Blundstone Arena,North Melbourne,West Coast Eagles,97 - 102
+189,22,10/08/2024 06:35,Optus Stadium,Fremantle,Geelong Cats,62 - 73
+183,22,10/08/2024 09:30,Marvel Stadium,Essendon,Gold Coast Suns,86 - 87
+184,22,10/08/2024 09:30,MCG,Melbourne,Port Adelaide,51 - 53
+182,22,11/08/2024 03:10,MCG,Carlton,Hawthorn,38 - 112
+186,22,11/08/2024 05:20,Marvel Stadium,Richmond,St Kilda,51 - 99
+188,22,11/08/2024 06:10,Adelaide Oval,Adelaide Crows,Western Bulldogs,111 - 72
+191,23,16/08/2024 09:40,Marvel Stadium,Essendon,Sydney Swans,59 - 98
+192,23,17/08/2024 03:45,People First Stadium,Gold Coast Suns,Melbourne,63 - 117
+193,23,17/08/2024 03:45,ENGIE Stadium,GWS Giants,Fremantle,101 - 92
+190,23,17/08/2024 06:35,MCG,Collingwood,Brisbane Lions,79 - 78
+195,23,17/08/2024 09:30,Marvel Stadium,St Kilda,Geelong Cats,107 - 89
+197,23,17/08/2024 09:30,Adelaide Oval,Port Adelaide,Adelaide Crows,80 - 58
+196,23,18/08/2024 03:10,Marvel Stadium,Western Bulldogs,North Melbourne,138 - 42
+194,23,18/08/2024 05:20,MCG,Hawthorn,Richmond,131 - 68
+198,23,18/08/2024 06:40,Optus Stadium,West Coast Eagles,Carlton,34 - 99
+203,24,23/08/2024 09:40,MCG,Melbourne,Collingwood,57 - 103
+202,24,24/08/2024 02:30,UTAS Stadium,Hawthorn,North Melbourne,170 - 46
+201,24,24/08/2024 03:45,GMHBA Stadium,Geelong Cats,West Coast Eagles,168 - 75
+204,24,24/08/2024 05:20,MCG,Richmond,Gold Coast Suns,66 - 94
+199,24,24/08/2024 09:30,Gabba,Brisbane Lions,Essendon,87 - 67
+205,24,24/08/2024 09:40,SCG,Sydney Swans,Adelaide Crows,121 - 90
+206,24,25/08/2024 02:30,Mars Stadium,Western Bulldogs,GWS Giants,98 - 61
+200,24,25/08/2024 05:20,Marvel Stadium,Carlton,St Kilda,74 - 76
+207,24,25/08/2024 08:10,Optus Stadium,Fremantle,Port Adelaide,67 - 87
+208,Finals W1,05/09/2024 09:40,Adelaide Oval,Port Adelaide,Geelong Cats,54 - 138
+209,Finals W1,06/09/2024 09:40,MCG,Western Bulldogs,Hawthorn,62 - 99
+210,Finals W1,07/09/2024 05:20,SCG,Sydney Swans,GWS Giants,88 - 82
+211,Finals W1,07/09/2024 09:30,Gabba,Brisbane Lions,Carlton,99 - 71
+212,Semi Finals,13/09/2024 09:40,Adelaide Oval,Port Adelaide,Hawthorn,75 - 72
+213,Semi Finals,14/09/2024 09:30,ENGIE Stadium,GWS Giants,Brisbane Lions,100 - 105
+214,Prelim Finals,20/09/2024 09:40,SCG,Sydney Swans,Port Adelaide,95 - 59
+215,Prelim Finals,21/09/2024 07:15,MCG,Geelong Cats,Brisbane Lions,85 - 95
+216,Grand Final,28/09/2024 04:30,MCG,Sydney Swans,Brisbane Lions,60 - 120
