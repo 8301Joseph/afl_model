@@ -1,6 +1,6 @@
 from src.data_prep import LEAGUE_AVG_SCORE
 
-ALPHA = 0.3   # EWMA smoothing — higher = more weight on recent games
+ALPHA = 0.2   # EWMA smoothing — higher = more weight on recent games
 
 
 def compute_off_def_ratings(past_games):
@@ -58,9 +58,31 @@ def compute_off_def_ratings(past_games):
         away_scored   = row["away_score"]
         away_conceded = row["home_score"]
 
-        ratings[home]["off"] = ALPHA * home_scored   + (1 - ALPHA) * home_off
-        ratings[home]["def"] = ALPHA * home_conceded + (1 - ALPHA) * home_def
-        ratings[away]["off"] = ALPHA * away_scored   + (1 - ALPHA) * away_off
-        ratings[away]["def"] = ALPHA * away_conceded + (1 - ALPHA) * away_def
+        # Opponent-adjusted EWMA: target = league average + how much you beat expectation.
+        # Scoring 135 vs a def of 111 → target = 86 + 24 = 110 (modest, opponent was weak).
+        # Scoring 135 vs a def of 82  → target = 86 + 53 = 139 (impressive, held a strong defence).
+        ratings[home]["off"] = ALPHA * (LEAGUE_AVG_SCORE + home_scored   - away_def) + (1 - ALPHA) * home_off
+        ratings[home]["def"] = ALPHA * (LEAGUE_AVG_SCORE + home_conceded - away_off) + (1 - ALPHA) * home_def
+        ratings[away]["off"] = ALPHA * (LEAGUE_AVG_SCORE + away_scored   - home_def) + (1 - ALPHA) * away_off
+        ratings[away]["def"] = ALPHA * (LEAGUE_AVG_SCORE + away_conceded - home_off) + (1 - ALPHA) * away_def
 
     return ratings, history
+
+
+def compute_home_advantages(past_games):
+    """
+    Per-team home advantage = avg margin when at home minus avg margin when away.
+    Positive = team performs better at home (e.g. Brisbane +12 at Gabba).
+    Zero = no home/away difference.
+
+    Returns dict of {team: home_advantage_points}
+    """
+    # avg margin when home (positive = win), avg margin when away (flipped so positive = win)
+    home_margins = past_games.groupby("Home Team")["margin"].mean()
+    away_margins = -past_games.groupby("Away Team")["margin"].mean()
+
+    all_teams = set(home_margins.index) | set(away_margins.index)
+    return {
+        team: home_margins.get(team, 0) - away_margins.get(team, 0)
+        for team in all_teams
+    }

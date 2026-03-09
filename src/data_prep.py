@@ -6,6 +6,19 @@ DATA_2026 = "data/afl-2026-UTC.csv"
 
 LEAGUE_AVG_SCORE = 86  # 2025 AFL average, used to initialise ratings
 
+# Normalise inconsistent team names across seasons
+TEAM_NAME_MAP = {
+    "GWS GIANTS":    "GWS Giants",
+    "Gold Coast SUNS": "Gold Coast Suns",
+}
+
+
+def normalise_team_names(df):
+    df = df.copy()
+    df["Home Team"] = df["Home Team"].replace(TEAM_NAME_MAP)
+    df["Away Team"] = df["Away Team"].replace(TEAM_NAME_MAP)
+    return df
+
 
 def parse_scores(df):
     """Split 'Result' column (e.g. '132 - 69') into home_score and away_score."""
@@ -22,7 +35,7 @@ def load_season(path, season_year):
     df = pd.read_csv(path)
     df["Date"] = pd.to_datetime(df["Date"], dayfirst=True)
     df["season"] = season_year
-    return df
+    return normalise_team_names(df)
 
 
 def importData():
