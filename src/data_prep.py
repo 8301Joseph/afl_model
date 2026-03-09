@@ -1,5 +1,7 @@
 import pandas as pd
 
+DATA_2022 = "data/afl-2022-UTC.csv"
+DATA_2023 = "data/afl-2023-UTC.csv"
 DATA_2024 = "data/afl-2024-UTC.csv"
 DATA_2025 = "data/afl-2025-UTC.csv"
 DATA_2026 = "data/afl-2026-UTC.csv"
@@ -44,6 +46,8 @@ def importData():
         past_games   — all completed games (2024, 2025, 2026 so far), sorted by date
         future_games — 2026 games not yet played (Result is NaN)
     """
+    df22 = load_season(DATA_2022, 2022)
+    df23 = load_season(DATA_2023, 2023)
     df24 = load_season(DATA_2024, 2024)
     df25 = load_season(DATA_2025, 2025)
     df26 = load_season(DATA_2026, 2026)
@@ -53,7 +57,7 @@ def importData():
     future_games = df26[df26["Result"].isna()].copy()
 
     # Combine all completed games and parse scores
-    past_games = pd.concat([df24, df25, played_2026], ignore_index=True)
+    past_games = pd.concat([df22, df23, df24, df25, played_2026], ignore_index=True)
     past_games = parse_scores(past_games)
     past_games = past_games.sort_values("Date").reset_index(drop=True)
 

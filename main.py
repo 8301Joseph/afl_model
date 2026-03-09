@@ -2,6 +2,8 @@ from src.data_prep import importData
 from src.elo import compute_elo_ratings
 from src.ratings import compute_off_def_ratings, compute_home_advantages
 from src.model import build_feature_matrix, train_model, predict_games, compute_h2h_residuals
+from src.backtest import run_backtest, print_backtest
+from src.ladder import build_ladder, print_ladder, save_ladder
 
 
 def main():
@@ -45,7 +47,11 @@ def main():
         direction = "home runs hot" if r["adj_residual"] > 0 else "home runs cold"
         print(f"  {r['home_team']:<25} {r['away_team']:<25} {r['avg_residual']:>+8.1f}  {r['adj_residual']:>+8.1f}  {int(r['n_games']):>5}   ({direction})")
 
-    # --- 6. Predict remaining 2026 games ---
+    # --- 6. Backtest accuracy on all past games ---
+    backtest_results = run_backtest(feature_df, model, features, h2h_residuals, eval_seasons=[2024, 2025])
+    print_backtest(backtest_results)
+
+    # --- 7. Predict remaining 2026 games ---
     predictions = predict_games(model, features, current_elo, current_ratings, home_advantages, future_games, h2h_residuals)
 
     print(f"\n=== 2026 Predictions ({len(predictions)} games) ===")
@@ -60,6 +66,11 @@ def main():
             f"Winner: {row['predicted_winner']:<25}  "
             f"Margin: {margin:+.1f}  HomeProbElo: {prob:.1f}%{bias_str}"
         )
+
+    # --- 8. Projected final ladder ---
+    ladder = build_ladder(past_games, predictions)
+    print_ladder(ladder)
+    save_ladder(ladder)
 
 
 if __name__ == "__main__":

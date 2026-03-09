@@ -1,0 +1,24 @@
+Generated: 2026-03-09
+
+=== Projected 2026 Final Ladder ===
+   #  Team                        P     xW    xPts        %
+  -------------------------------------------------------
+   1  Brisbane Lions             23   17.7    70.9    136.8%
+   2  GWS Giants                 23   16.9    67.6    127.2%
+   3  Western Bulldogs           23   16.2    64.6    126.7%
+   4  Collingwood                23   15.3    61.3    108.5%
+   5  Gold Coast Suns            23   15.2    60.9    119.4%
+   6  Fremantle                  23   15.1    60.5    109.8%
+   7  Hawthorn                   23   15.0    59.8    116.0%
+   8  Adelaide Crows             23   14.8    59.2    110.7%
+  ·······················································
+   9  Geelong Cats               23   13.6    54.5    114.1%
+  10  Sydney Swans               23   13.1    52.6    111.5%
+  11  Port Adelaide              23    9.8    39.3     92.9%
+  12  Carlton                    23    8.1    32.5     85.6%
+  13  St Kilda                   23    8.0    32.0     87.6%
+  14  Melbourne                  23    7.3    29.3     93.4%
+  15  North Melbourne            23    7.3    29.2     87.8%
+  16  Richmond                   23    5.5    21.9     74.3%
+  17  Essendon                   23    5.0    20.0     69.3%
+  18  West Coast Eagles          23    3.0    11.9     65.1%
