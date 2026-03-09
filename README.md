@@ -47,19 +47,44 @@ Match Number, Round Number, Date, Location, Home Team, Away Team, Result
 
 Result is `"home_score - away_score"` for completed games, empty for future games. 2022 and 2023 are used as warm-up data to calibrate ratings before the backtest window.
 
+## Website
+
+Live at **[web-production-f3a9e7.up.railway.app](https://web-production-f3a9e7.up.railway.app)**
+
+- Round-by-round predictions with win probability bars
+- Projected ladder
+- Past results vs model predictions with accuracy tracking
+
+Hosted on Railway. The server runs `main.py` on startup to generate fresh predictions, then serves them via a FastAPI backend. The frontend is a single HTML file served from the same server.
+
 ## Usage
 
 ```bash
+# Generate predictions (saves to output/predictions.json)
 python main.py
+
+# Start the API server
+uvicorn api:app --reload
 ```
 
-Prints and saves:
+`main.py` prints and saves:
 1. Current Elo + off/def ratings for all 18 teams
 2. Model coefficients (raw and standardised)
 3. Top head-to-head matchup biases vs model expectation
 4. Backtest accuracy on 2024/2025 seasons
 5. Predicted winner, margin, and home win probability for all remaining 2026 games
 6. Projected final ladder (also saved to `ladder.txt`)
+
+## API endpoints
+
+| Endpoint | Description |
+|---|---|
+| `GET /` | Frontend website |
+| `GET /predictions` | All upcoming game predictions |
+| `GET /ladder` | Projected final ladder |
+| `GET /results` | Past 2026 games with predicted vs actual outcomes |
+| `GET /round/{n}` | Predictions for a specific round |
+| `GET /health` | Health check |
 
 ## Project structure
 
@@ -71,9 +96,13 @@ src/
   model.py       — feature matrix, Ridge regression, H2H residuals, predictions
   backtest.py    — walk-forward accuracy evaluation on past seasons
   ladder.py      — probabilistic projected ladder from predictions
-main.py          — entry point
+frontend/
+  index.html     — website UI
+main.py          — pipeline entry point; saves output/predictions.json
+api.py           — FastAPI server
 data/            — season CSVs (2022–2026)
-ladder.txt       — latest projected ladder output
+output/          — generated JSON (predictions, ladder, past results)
+ladder.txt       — latest projected ladder (plain text)
 ```
 
 ## Backtest results
