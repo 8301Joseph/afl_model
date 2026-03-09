@@ -5,12 +5,57 @@ from datetime import datetime, date
 from src.data_prep import importData
 from src.elo import compute_elo_ratings
 from src.ratings import compute_off_def_ratings, compute_home_advantages
-from src.model import build_feature_matrix, train_model, predict_games, compute_h2h_residuals
+from src.model import build_feature_matrix, train_model, predict_games, compute_h2h_residuals, win_prob_from_margin
 from src.backtest import run_backtest, print_backtest
 from src.ladder import build_probabilistic_ladder, print_ladder, save_ladder
 
 
-def save_output(predictions, ladder, path="output/predictions.json"):
+def compute_past_results(feature_df, model, features, margin_std, h2h_residuals, ratings_games):
+    """Predict already-played 2026 games and compare to actual results."""
+    import numpy as np
+
+    df_2026 = feature_df[feature_df["season"] == 2026].copy()
+    if df_2026.empty:
+        return []
+
+    rg_rounds = (
+        ratings_games[ratings_games["season"] == 2026][["Home Team", "Away Team", "Date", "Round Number"]]
+        .rename(columns={"Home Team": "home_team", "Away Team": "away_team", "Date": "date", "Round Number": "round"})
+    )
+    df_2026 = df_2026.merge(rg_rounds, on=["home_team", "away_team", "date"], how="left")
+    df_2026["round"] = df_2026["round"].fillna("")
+
+    h2h_lookup = {
+        (r["home_team"], r["away_team"]): r["adj_residual"]
+        for _, r in h2h_residuals.iterrows()
+    } if h2h_residuals is not None else {}
+
+    predicted_margins = model.predict(df_2026[features].values)
+
+    rows = []
+    for i, (_, row) in enumerate(df_2026.iterrows()):
+        adjusted = predicted_margins[i] + h2h_lookup.get((row["home_team"], row["away_team"]), 0.0)
+        wp = win_prob_from_margin(adjusted, margin_std)
+        predicted_winner = row["home_team"] if adjusted > 0 else row["away_team"]
+        actual_winner = row["home_team"] if row["margin"] > 0 else row["away_team"]
+        rows.append({
+            "date":             row["date"],
+            "round":            row["round"],
+            "home_team":        row["home_team"],
+            "away_team":        row["away_team"],
+            "home_score":       int(row["home_score"]),
+            "away_score":       int(row["away_score"]),
+            "actual_margin":    int(row["margin"]),
+            "predicted_margin": round(float(adjusted), 1),
+            "win_prob_home":    round(float(wp), 3),
+            "predicted_winner": predicted_winner,
+            "actual_winner":    actual_winner,
+            "correct":          predicted_winner == actual_winner,
+        })
+    return rows
+
+
+def save_output(predictions, ladder, past_results, path="output/predictions.json"):
     """Save predictions and ladder to JSON for the API to serve."""
     def _serialize(val):
         if isinstance(val, (date, datetime)):
@@ -27,10 +72,16 @@ def save_output(predictions, ladder, path="output/predictions.json"):
         for pos, row in ladder.iterrows()
     ]
 
+    past_results_list = [
+        {k: _serialize(v) for k, v in row.items()}
+        for row in past_results
+    ]
+
     output = {
         "generated_at": datetime.utcnow().isoformat() + "Z",
         "predictions": predictions_list,
         "ladder": ladder_list,
+        "results": past_results_list,
     }
 
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -111,7 +162,8 @@ def main():
     ladder = build_probabilistic_ladder(ratings_games, predictions)
     print_ladder(ladder)
     save_ladder(ladder)
-    save_output(predictions, ladder)
+    past_results = compute_past_results(feature_df, model, features, margin_std, h2h_residuals, ratings_games)
+    save_output(predictions, ladder, past_results)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prooty</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f4f4f5;
+      --surface: #ffffff;
+      --border: #e4e4e7;
+      --text: #18181b;
+      --muted: #71717a;
+      --accent: #2563eb;
+      --green: #16a34a;
+      --red: #dc2626;
+      --radius: 8px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      background: #18181b;
+      color: white;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+
+    header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.5px; }
+    header .subtitle { font-size: 0.85rem; color: #a1a1aa; }
+    header .updated { font-size: 0.75rem; color: #71717a; margin-left: auto; }
+
+    .layout {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 720px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { order: -1; }
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0.25rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+    }
+
+    .tab {
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.8rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.12s;
+      font-family: inherit;
+    }
+
+    .tab:hover { border-color: var(--accent); color: var(--accent); }
+    .tab.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+    /* Game cards */
+    .games { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+    }
+
+    .card-meta {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .teams {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+      gap: 0.5rem;
+    }
+
+    .team { display: flex; flex-direction: column; gap: 0.15rem; flex: 1; }
+    .team.away { align-items: flex-end; text-align: right; }
+
+    .team-name { font-size: 0.95rem; font-weight: 600; }
+    .team-name.winner { color: var(--accent); }
+    .team-elo { font-size: 0.72rem; color: var(--muted); }
+    .vs { font-size: 0.72rem; color: var(--muted); padding-top: 0.2rem; flex-shrink: 0; }
+
+    .prob-bar-wrap { margin-bottom: 0.6rem; }
+
+    .prob-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .prob-bar {
+      height: 5px;
+      border-radius: 999px;
+      background: var(--border);
+      overflow: hidden;
+      display: flex;
+    }
+
+    .prob-home { height: 100%; background: var(--accent); }
+    .prob-away { height: 100%; background: #d1d5db; flex: 1; }
+
+    .card-footer { font-size: 0.78rem; color: var(--muted); }
+    .card-footer strong { color: var(--text); }
+
+    /* Sidebar */
+    .sidebar { position: sticky; top: 1.5rem; }
+
+    .sidebar-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .sidebar-card h2 {
+      padding: 0.65rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      background: #fafafa;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--muted);
+    }
+
+    .ladder-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+
+    .ladder-table th {
+      padding: 0.35rem 0.65rem;
+      text-align: right;
+      font-weight: 500;
+      color: var(--muted);
+      background: #fafafa;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.7rem;
+    }
+
+    .ladder-table th:nth-child(2) { text-align: left; }
+
+    .ladder-table td {
+      padding: 0.4rem 0.65rem;
+      text-align: right;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ladder-table td:first-child { color: var(--muted); font-size: 0.72rem; }
+    .ladder-table td:nth-child(2) { text-align: left; font-weight: 500; }
+    .ladder-table tr:last-child td { border-bottom: none; }
+    .ladder-divider td { padding: 1px 0; background: var(--border); }
+
+    /* Past results */
+    .past-section { margin-top: 2rem; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-header h2 { font-size: 0.95rem; font-weight: 600; }
+
+    .accuracy-badge {
+      font-size: 0.72rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .results-table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow-x: auto;
+    }
+
+    .results-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+
+    .results-table th {
+      padding: 0.55rem 0.75rem;
+      text-align: left;
+      font-weight: 500;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      background: #fafafa;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .results-table td {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .results-table tr:last-child td { border-bottom: none; }
+
+    .correct { color: var(--green); font-weight: 600; }
+    .incorrect { color: var(--red); font-weight: 600; }
+    .empty { color: var(--muted); font-style: italic; padding: 1rem 1.25rem; font-size: 0.85rem; }
+    #error { color: var(--red); padding: 2rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Prooty</h1>
+    <span class="subtitle">AFL 2026 Predictions</span>
+    <span class="updated" id="updated"></span>
+  </header>
+
+  <div class="layout">
+    <main>
+      <div id="tabs" class="tabs"></div>
+      <div id="games" class="games"></div>
+      <div id="past-section" class="past-section"></div>
+      <div id="error"></div>
+    </main>
+
+    <aside class="sidebar">
+      <div id="ladder" class="sidebar-card"></div>
+    </aside>
+  </div>
+
+  <script>
+    let allPredictions = [];
+    let activeRound = null;
+
+    async function init() {
+      try {
+        const [predRes, ladderRes, resultsRes] = await Promise.all([
+          fetch('/predictions'),
+          fetch('/ladder'),
+          fetch('/results'),
+        ]);
+
+        const pred = await predRes.json();
+        const ladderData = await ladderRes.json();
+        const resultsData = await resultsRes.json();
+
+        allPredictions = pred.predictions || [];
+
+        if (pred.generated_at) {
+          document.getElementById('updated').textContent = 'Updated ' + formatRelative(pred.generated_at);
+        }
+
+        const rounds = [...new Set(allPredictions.map(g => g.round))]
+          .sort((a, b) => Number(a) - Number(b));
+
+        if (rounds.length > 0) {
+          activeRound = rounds[0];
+          renderTabs(rounds);
+          renderGames(allPredictions.filter(g => g.round === activeRound));
+        } else {
+          document.getElementById('games').innerHTML = '<p class="empty">No upcoming games.</p>';
+        }
+
+        renderLadder(ladderData.ladder || []);
+        renderPastResults(resultsData.results || []);
+
+      } catch (err) {
+        document.getElementById('error').textContent = 'Error loading data: ' + err.message;
+      }
+    }
+
+    function renderTabs(rounds) {
+      document.getElementById('tabs').innerHTML = rounds.map(r =>
+        `<button class="tab${r === activeRound ? ' active' : ''}" onclick="selectRound(${JSON.stringify(r)}, event)">Rd ${r}</button>`
+      ).join('');
+    }
+
+    function selectRound(round, e) {
+      activeRound = round;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      e.target.classList.add('active');
+      renderGames(allPredictions.filter(g => g.round === round));
+    }
+
+    function renderGames(games) {
+      const el = document.getElementById('games');
+      if (!games.length) {
+        el.innerHTML = '<p class="empty">No games for this round.</p>';
+        return;
+      }
+      el.innerHTML = games.map(g => {
+        const homeProb = Math.round(g.win_prob_home * 100);
+        const awayProb = 100 - homeProb;
+        const homeWins = g.predicted_winner === g.home_team;
+        const date = formatGameDate(g.date);
+        const absMargin = Math.abs(g.predicted_margin);
+
+        return `
+          <div class="card">
+            <div class="card-meta">${date}${g.location ? ' &middot; ' + g.location : ''}</div>
+            <div class="teams">
+              <div class="team home">
+                <span class="team-name${homeWins ? ' winner' : ''}">${g.home_team}</span>
+                <span class="team-elo">Elo ${g.home_elo}</span>
+              </div>
+              <span class="vs">vs</span>
+              <div class="team away">
+                <span class="team-name${!homeWins ? ' winner' : ''}">${g.away_team}</span>
+                <span class="team-elo">Elo ${g.away_elo}</span>
+              </div>
+            </div>
+            <div class="prob-bar-wrap">
+              <div class="prob-labels">
+                <span>${homeProb}%</span>
+                <span>${awayProb}%</span>
+              </div>
+              <div class="prob-bar">
+                <div class="prob-home" style="width:${homeProb}%"></div>
+                <div class="prob-away"></div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <strong>${g.predicted_winner}</strong> by ${absMargin} pts
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function renderLadder(ladder) {
+      const el = document.getElementById('ladder');
+      if (!ladder.length) {
+        el.innerHTML = '<p class="empty">Ladder unavailable.</p>';
+        return;
+      }
+
+      const rows = ladder.map(t => {
+        const divider = t.position === 9
+          ? '<tr class="ladder-divider"><td colspan="6"></td></tr>'
+          : '';
+        return divider + `
+          <tr>
+            <td>${t.position}</td>
+            <td>${t.team}</td>
+            <td>${t.played}</td>
+            <td>${t.wins}</td>
+            <td>${t.pts}</td>
+            <td>${t.pct}%</td>
+          </tr>`;
+      }).join('');
+
+      el.innerHTML = `
+        <h2>Projected Ladder</h2>
+        <table class="ladder-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Team</th><th>P</th><th>xW</th><th>Pts</th><th>%</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    function renderPastResults(results) {
+      const el = document.getElementById('past-section');
+      if (!results.length) {
+        el.innerHTML = `
+          <div class="section-header"><h2>Past Results</h2></div>
+          <div class="results-table-wrap"><p class="empty">No past games yet this season.</p></div>`;
+        return;
+      }
+
+      const correct = results.filter(r => r.correct).length;
+      const pct = Math.round(correct / results.length * 100);
+
+      const rows = results.map(r => {
+        const icon = r.correct
+          ? '<span class="correct">✓</span>'
+          : '<span class="incorrect">✗</span>';
+        return `
+          <tr>
+            <td>Rd ${r.round}</td>
+            <td>${formatGameDate(r.date)}</td>
+            <td style="font-weight:500">${r.home_team}</td>
+            <td>${r.home_score}–${r.away_score}</td>
+            <td style="font-weight:500">${r.away_team}</td>
+            <td>${r.predicted_winner}</td>
+            <td>${Math.round(r.win_prob_home * 100)}%</td>
+            <td>${icon}</td>
+          </tr>`;
+      }).join('');
+
+      el.innerHTML = `
+        <div class="section-header">
+          <h2>Past Results</h2>
+          <span class="accuracy-badge">${correct}/${results.length} correct (${pct}%)</span>
+        </div>
+        <div class="results-table-wrap">
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th>Rd</th><th>Date</th><th>Home</th><th>Score</th>
+                <th>Away</th><th>Predicted</th><th>Prob</th><th></th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+    }
+
+    function formatGameDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
+    }
+
+    function formatRelative(iso) {
+      const diff = Date.now() - new Date(iso).getTime();
+      const hrs = Math.floor(diff / 3600000);
+      if (hrs < 1) return 'just now';
+      if (hrs < 24) return `${hrs}h ago`;
+      return `${Math.floor(hrs / 24)}d ago`;
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -3,8 +3,10 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 DATA_FILE = Path("output/predictions.json")
+FRONTEND = Path("frontend/index.html")
 
 app = FastAPI(title="AFL Model API")
 
@@ -23,7 +25,12 @@ def _load():
         return json.load(f)
 
 
-@app.get("/")
+@app.get("/", response_class=FileResponse)
+def serve_frontend():
+    return FileResponse(FRONTEND)
+
+
+@app.get("/health")
 def health():
     return {"status": "ok"}
 
@@ -43,6 +50,15 @@ def get_ladder():
     return {
         "generated_at": data["generated_at"],
         "ladder": data["ladder"],
+    }
+
+
+@app.get("/results")
+def get_results():
+    data = _load()
+    return {
+        "generated_at": data["generated_at"],
+        "results": data.get("results", []),
     }
 
 
