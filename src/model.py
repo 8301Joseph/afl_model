@@ -3,7 +3,7 @@ import pandas as pd
 from scipy.stats import norm
 from sklearn.linear_model import Ridge
 
-DECAY_LAMBDA = 0.002   # time-decay rate; half-life ≈ 350 days (~one season)
+DECAY_LAMBDA = 0.0023   # time-decay rate; half-life ≈ 350 days (~one season)
 
 
 def build_feature_matrix(elo_history, ratings_history, home_advantages):
