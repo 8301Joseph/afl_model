@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-09T21:31:35.648459Z",
+  "generated_at": "2026-03-09T22:45:17.954787Z",
   "predictions": [
     {
       "date": "2026-03-12T08:30:00",
@@ -2808,6 +2808,78 @@
       "pf": 1559,
       "pa": 2397,
       "pct": 65.1
+    }
+  ],
+  "results": [
+    {
+      "date": "2026-03-05T08:30:00",
+      "round": "OR",
+      "home_team": "Sydney Swans",
+      "away_team": "Carlton",
+      "home_score": 132,
+      "away_score": 69,
+      "actual_margin": 63,
+      "predicted_margin": 17.1,
+      "win_prob_home": 0.687,
+      "predicted_winner": "Sydney Swans",
+      "actual_winner": "Sydney Swans",
+      "correct": true
+    },
+    {
+      "date": "2026-03-06T09:05:00",
+      "round": "OR",
+      "home_team": "Gold Coast Suns",
+      "away_team": "Geelong Cats",
+      "home_score": 125,
+      "away_score": 69,
+      "actual_margin": 56,
+      "predicted_margin": 4.0,
+      "win_prob_home": 0.546,
+      "predicted_winner": "Gold Coast Suns",
+      "actual_winner": "Gold Coast Suns",
+      "correct": true
+    },
+    {
+      "date": "2026-03-07T05:15:00",
+      "round": "OR",
+      "home_team": "GWS Giants",
+      "away_team": "Hawthorn",
+      "home_score": 122,
+      "away_score": 95,
+      "actual_margin": 27,
+      "predicted_margin": 1.9,
+      "win_prob_home": 0.522,
+      "predicted_winner": "GWS Giants",
+      "actual_winner": "GWS Giants",
+      "correct": true
+    },
+    {
+      "date": "2026-03-07T08:35:00",
+      "round": "OR",
+      "home_team": "Brisbane Lions",
+      "away_team": "Western Bulldogs",
+      "home_score": 106,
+      "away_score": 111,
+      "actual_margin": -5,
+      "predicted_margin": 13.6,
+      "win_prob_home": 0.651,
+      "predicted_winner": "Brisbane Lions",
+      "actual_winner": "Western Bulldogs",
+      "correct": false
+    },
+    {
+      "date": "2026-03-08T08:20:00",
+      "round": "OR",
+      "home_team": "St Kilda",
+      "away_team": "Collingwood",
+      "home_score": 66,
+      "away_score": 78,
+      "actual_margin": -12,
+      "predicted_margin": -9.5,
+      "win_prob_home": 0.393,
+      "predicted_winner": "Collingwood",
+      "actual_winner": "Collingwood",
+      "correct": true
     }
   ]
 }
