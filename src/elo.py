@@ -4,6 +4,7 @@ DEFAULT_RATING = 1500   # Starting Elo
 HOME_ADVANTAGE  = 60    # Elo points added to home team's effective rating
 K               = 35    # how fast ratings shift after each game
 SEASON_REGRESS  = 0.25  # pull ratings 25% back toward 1500 each new season
+MARGIN_CAP      = 60    # blowouts beyond this (pts) get no extra Elo punishment
 
 
 def expected_win_prob(rating_a, rating_b):
@@ -14,10 +15,11 @@ def expected_win_prob(rating_a, rating_b):
 def margin_multiplier(margin):
     """
     Scale the Elo update by how big the win was.
-    log(margin+1) gives diminishing returns — a 50pt win counts more than 10pt,
-    but a 100pt win doesn't count twice as much as 50pt.
+    log(margin+1) gives diminishing returns — a 50pt win counts more than 10pt.
+    Capped at MARGIN_CAP so blowouts (90+pt losses) don't disproportionately
+    crater ratings; beyond that threshold the extra margin is mostly garbage time.
     """
-    return np.log(abs(margin) + 1)
+    return np.log(min(abs(margin), MARGIN_CAP) + 1)
 
 
 def update_elo(r_home, r_away, home_score, away_score):

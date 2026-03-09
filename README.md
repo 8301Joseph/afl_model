@@ -15,7 +15,7 @@ target_off = league_avg + (points_scored - opponent_def_rating)
 new_off    = alpha * target_off + (1 - alpha) * old_off
 ```
 
-Scoring 135 against a weak defence (def=111) is worth less than scoring 135 against a strong defence (def=82). Alpha = 0.22 — roughly the last 7–9 games dominate.
+Scoring 135 against a weak defence (def=111) is worth less than scoring 135 against a strong defence (def=82). Alpha = 0.26 — roughly the last 6–8 games dominate.
 
 ### Per-team home advantage ([src/ratings.py](src/ratings.py))
 Each team's historical average margin at home minus average margin away. Captures ground-specific effects (e.g. Brisbane at the Gabba) without splitting the limited EWMA sample.
@@ -31,6 +31,8 @@ Ridge regression trained on all past games with exponential time-decay weights �
 | `home_team_advantage` | Per-team historical home ground boost |
 
 Target: `margin = home_score - away_score`. Predicted winner is whichever side has positive predicted margin.
+
+Win probability is computed from the predicted margin using a fitted normal distribution: `P(home wins) = Φ(predicted_margin / σ)`, where σ is the empirical standard deviation of training residuals. This is better calibrated than Elo-only win probability because it incorporates all model features and the actual spread of historical errors.
 
 ### Head-to-head matchup bias ([src/model.py](src/model.py))
 After fitting the model, residuals are computed per `(home_team, away_team)` pair. The average residual captures systematic over/underperformance in specific matchups beyond what the base model explains. Residuals are shrunk toward zero with a Bayesian prior (k=5 games for 50% weight) to avoid over-fitting thin samples. The adjusted bias is added to the base predicted margin at prediction time.
@@ -93,3 +95,4 @@ ladder.txt       — latest projected ladder output
 
 ## Planned improvements
 - Pull live data from Squiggle API instead of CSV
+- Try gradient boosting (e.g. XGBoost/LightGBM) instead of Ridge regression — captures non-linear feature interactions and may improve margin accuracy without manual feature engineering

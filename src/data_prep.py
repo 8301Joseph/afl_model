@@ -43,8 +43,13 @@ def load_season(path, season_year):
 def importData():
     """
     Returns:
-        past_games   — all completed games (2024, 2025, 2026 so far), sorted by date
-        future_games — 2026 games not yet played (Result is NaN)
+        all_games     — all completed games (2022–2026), used as backtest warm-up + evaluation
+        ratings_games — completed games from 2024 onward, used for current ratings and model training
+        future_games  — 2026 games not yet played (Result is NaN)
+
+    2022 and 2023 are included in all_games so the backtest walk-forward starts with
+    warm ratings at 2024 Round 1 rather than cold 1500s. They are excluded from
+    ratings_games so current team strengths reflect only recent seasons.
     """
     df22 = load_season(DATA_2022, 2022)
     df23 = load_season(DATA_2023, 2023)
@@ -56,9 +61,10 @@ def importData():
     played_2026  = df26.dropna(subset=["Result"]).copy()
     future_games = df26[df26["Result"].isna()].copy()
 
-    # Combine all completed games and parse scores
-    past_games = pd.concat([df22, df23, df24, df25, played_2026], ignore_index=True)
-    past_games = parse_scores(past_games)
-    past_games = past_games.sort_values("Date").reset_index(drop=True)
+    all_games = pd.concat([df22, df23, df24, df25, played_2026], ignore_index=True)
+    all_games = parse_scores(all_games)
+    all_games = all_games.sort_values("Date").reset_index(drop=True)
 
-    return past_games, future_games
+    ratings_games = all_games[all_games["season"] >= 2024].reset_index(drop=True)
+
+    return all_games, ratings_games, future_games

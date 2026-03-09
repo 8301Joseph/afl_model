@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from scipy.stats import norm
 from sklearn.linear_model import Ridge
 
 DECAY_LAMBDA = 0.002   # time-decay rate; half-life ≈ 350 days (~one season)
@@ -65,7 +66,19 @@ def train_model(feature_df):
     model = Ridge(alpha=1.0)
     model.fit(X, y, sample_weight=w)
 
-    return model, features
+    # Empirical std of residuals — used to convert predicted margin → win probability
+    residuals = y - model.predict(X)
+    margin_std = float(np.std(residuals))
+
+    return model, features, margin_std
+
+
+def win_prob_from_margin(predicted_margin, margin_std):
+    """
+    P(home wins) = P(actual margin > 0) where actual ~ N(predicted_margin, margin_std^2).
+    Equivalent to the normal CDF evaluated at predicted_margin / margin_std.
+    """
+    return float(norm.cdf(predicted_margin / margin_std))
 
 
 def compute_h2h_residuals(feature_df, model, features):
@@ -102,7 +115,7 @@ def compute_h2h_residuals(feature_df, model, features):
     return h2h
 
 
-def predict_games(model, features, current_elo, current_ratings, home_advantages, future_games, h2h_residuals=None):
+def predict_games(model, features, current_elo, current_ratings, home_advantages, future_games, h2h_residuals=None, margin_std=None):
     """
     Predict margin and winner for each upcoming game.
 
@@ -113,6 +126,8 @@ def predict_games(model, features, current_elo, current_ratings, home_advantages
         current_ratings — dict of {team: {"off": float, "def": float}}
         future_games    — dataframe of upcoming games
         h2h_residuals   — optional DataFrame from compute_h2h_residuals; adds matchup bias
+        margin_std      — residual std from training; if provided, win prob is margin-based
+                          (more accurate than Elo-only); falls back to Elo if None
 
     Returns:
         predictions dataframe
@@ -158,6 +173,12 @@ def predict_games(model, features, current_elo, current_ratings, home_advantages
         h2h_bias = h2h_lookup.get((home, away), 0.0)
         adjusted_margin = predicted_margin + h2h_bias
 
+        # Win probability: prefer margin-based (calibrated to model residuals) over Elo-only
+        if margin_std is not None:
+            win_prob = win_prob_from_margin(adjusted_margin, margin_std)
+        else:
+            win_prob = e_home
+
         rows.append({
             "date":             game["Date"],
             "round":            game["Round Number"],
@@ -166,7 +187,7 @@ def predict_games(model, features, current_elo, current_ratings, home_advantages
             "location":         game["Location"],
             "home_elo":         round(r_home, 1),
             "away_elo":         round(r_away, 1),
-            "win_prob_home":    round(e_home, 3),
+            "win_prob_home":    round(win_prob, 3),
             "predicted_margin": round(adjusted_margin, 1),
             "h2h_bias":         round(h2h_bias, 1),
             "predicted_winner": home if adjusted_margin > 0 else away,

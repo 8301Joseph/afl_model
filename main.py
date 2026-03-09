@@ -1,21 +1,56 @@
+import json
+import os
+from datetime import datetime, date
+
 from src.data_prep import importData
 from src.elo import compute_elo_ratings
 from src.ratings import compute_off_def_ratings, compute_home_advantages
 from src.model import build_feature_matrix, train_model, predict_games, compute_h2h_residuals
 from src.backtest import run_backtest, print_backtest
-from src.ladder import build_ladder, print_ladder, save_ladder
+from src.ladder import build_probabilistic_ladder, print_ladder, save_ladder
+
+
+def save_output(predictions, ladder, path="output/predictions.json"):
+    """Save predictions and ladder to JSON for the API to serve."""
+    def _serialize(val):
+        if isinstance(val, (date, datetime)):
+            return val.isoformat()
+        return val
+
+    predictions_list = [
+        {k: _serialize(v) for k, v in row.items()}
+        for row in predictions.to_dict(orient="records")
+    ]
+
+    ladder_list = [
+        {"position": pos, **{k: _serialize(v) for k, v in row.items()}}
+        for pos, row in ladder.iterrows()
+    ]
+
+    output = {
+        "generated_at": datetime.utcnow().isoformat() + "Z",
+        "predictions": predictions_list,
+        "ladder": ladder_list,
+    }
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(output, f, indent=2)
+    print(f"  Output saved to {path}")
 
 
 def main():
     # --- 1. Load data ---
-    past_games, future_games = importData()
-    print(f"Past games loaded:   {len(past_games)}")
-    print(f"Future games loaded: {len(future_games)}\n")
+    all_games, ratings_games, future_games = importData()
+    print(f"All completed games:  {len(all_games)}  (2022–2026, used for backtest warm-up)")
+    print(f"Ratings games:       {len(ratings_games)}  (2024–2026, used for current ratings & model)")
+    print(f"Future games:        {len(future_games)}\n")
 
-    # --- 2. Compute ratings from all past games ---
-    current_elo, elo_history         = compute_elo_ratings(past_games)
-    current_ratings, ratings_history = compute_off_def_ratings(past_games)
-    home_advantages                  = compute_home_advantages(past_games)
+    # --- 2. Compute current ratings from 2024+ only ---
+    # 2022/2023 are excluded so current team strengths reflect only recent seasons.
+    current_elo, elo_history         = compute_elo_ratings(ratings_games)
+    current_ratings, ratings_history = compute_off_def_ratings(ratings_games)
+    home_advantages                  = compute_home_advantages(ratings_games)
 
     # --- 3. Print current standings ---
     print("=== Current Elo Ratings ===")
@@ -24,9 +59,9 @@ def main():
         def_ = current_ratings[team]["def"]
         print(f"  {team:<25} Elo: {rating:6.1f}   Off: {off:5.1f}   Def: {def_:5.1f}")
 
-    # --- 4. Build features and train model on past games ---
+    # --- 4. Build features and train model on 2024+ games ---
     feature_df = build_feature_matrix(elo_history, ratings_history, home_advantages)
-    model, features = train_model(feature_df)
+    model, features, margin_std = train_model(feature_df)
 
     import numpy as np
     feature_stds    = feature_df[features].std()
@@ -38,7 +73,7 @@ def main():
         print(f"  {name:<22} {coef:>+10.3f}  {std_coef:>+10.2f}")
     print(f"  {'intercept':<22} {model.intercept_:>+10.3f}")
 
-    # --- 5. Head-to-head matchup biases ---
+    # --- 5. Head-to-head matchup biases (2024+ only) ---
     h2h_residuals = compute_h2h_residuals(feature_df, model, features)
     notable = h2h_residuals[h2h_residuals["n_games"] >= 2].head(15)
     print(f"\n=== Top H2H Matchup Biases (vs model expectation, min 2 games) ===")
@@ -47,12 +82,17 @@ def main():
         direction = "home runs hot" if r["adj_residual"] > 0 else "home runs cold"
         print(f"  {r['home_team']:<25} {r['away_team']:<25} {r['avg_residual']:>+8.1f}  {r['adj_residual']:>+8.1f}  {int(r['n_games']):>5}   ({direction})")
 
-    # --- 6. Backtest accuracy on all past games ---
-    backtest_results = run_backtest(feature_df, model, features, h2h_residuals, eval_seasons=[2024, 2025])
+    # --- 6. Backtest using all games (2022/2023 warm up ratings, evaluate 2024/2025) ---
+    # Separate rating computation so the backtest walk-forward starts with warm Elos at 2024 R1.
+    _, elo_hist_all  = compute_elo_ratings(all_games)
+    _, rat_hist_all  = compute_off_def_ratings(all_games)
+    ha_all           = compute_home_advantages(all_games)
+    feature_df_all   = build_feature_matrix(elo_hist_all, rat_hist_all, ha_all)
+    backtest_results = run_backtest(feature_df_all, features, eval_seasons=[2024, 2025])
     print_backtest(backtest_results)
 
     # --- 7. Predict remaining 2026 games ---
-    predictions = predict_games(model, features, current_elo, current_ratings, home_advantages, future_games, h2h_residuals)
+    predictions = predict_games(model, features, current_elo, current_ratings, home_advantages, future_games, h2h_residuals, margin_std=margin_std)
 
     print(f"\n=== 2026 Predictions ({len(predictions)} games) ===")
     for _, row in predictions.iterrows():
@@ -68,9 +108,10 @@ def main():
         )
 
     # --- 8. Projected final ladder ---
-    ladder = build_ladder(past_games, predictions)
+    ladder = build_probabilistic_ladder(ratings_games, predictions)
     print_ladder(ladder)
     save_ladder(ladder)
+    save_output(predictions, ladder)
 
 
 if __name__ == "__main__":
