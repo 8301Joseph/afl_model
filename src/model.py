@@ -13,9 +13,13 @@ def build_feature_matrix(elo_history, ratings_history, home_advantages):
     elo_df     = pd.DataFrame(elo_history)
     ratings_df = pd.DataFrame(ratings_history)
 
-    df = elo_df.merge(
-        ratings_df.drop(columns=["date", "home_team", "away_team"]),
-        on="match_number"
+    # Both histories are built from the same loop over past_games in identical order,
+    # so a positional join is correct. match_number resets each season and cannot be
+    # used as a unique key across seasons.
+    df = pd.concat(
+        [elo_df.reset_index(drop=True),
+         ratings_df.drop(columns=["match_number", "date", "home_team", "away_team"]).reset_index(drop=True)],
+        axis=1
     )
 
     # Add per-team home advantage as a feature (points boost for playing at home)
@@ -64,7 +68,41 @@ def train_model(feature_df):
     return model, features
 
 
-def predict_games(model, features, current_elo, current_ratings, home_advantages, future_games):
+def compute_h2h_residuals(feature_df, model, features):
+    """
+    For each (home_team, away_team) pair, compute the average residual:
+        residual = actual_margin - model_predicted_margin
+
+    Positive residual means the home team consistently outperforms what the model
+    expects in this specific matchup (and vice versa).
+
+    Returns a DataFrame with columns:
+        home_team, away_team, avg_residual, n_games
+    """
+    X = feature_df[features].values
+    predicted = model.predict(X)
+    df = feature_df[["home_team", "away_team", "margin"]].copy()
+    df["residual"] = (df["margin"] - predicted).clip(-40, 40)
+
+    h2h = (
+        df.groupby(["home_team", "away_team"])["residual"]
+        .agg(["mean", "count"])
+        .reset_index()
+        .rename(columns={"mean": "avg_residual", "count": "n_games"})
+    )
+
+    # Shrink toward zero based on sample size: with few games, trust it less.
+    # shrinkage = n / (n + k) where k controls how many games for "full trust".
+    # k=5 means 2 games → 29% weight, 5 games → 50%, 10 games → 67%.
+    K = 5
+    h2h["shrinkage"] = h2h["n_games"] / (h2h["n_games"] + K)
+    h2h["adj_residual"] = h2h["avg_residual"] * h2h["shrinkage"]
+
+    h2h = h2h.sort_values("adj_residual", key=abs, ascending=False).reset_index(drop=True)
+    return h2h
+
+
+def predict_games(model, features, current_elo, current_ratings, home_advantages, future_games, h2h_residuals=None):
     """
     Predict margin and winner for each upcoming game.
 
@@ -74,10 +112,16 @@ def predict_games(model, features, current_elo, current_ratings, home_advantages
         current_elo     — dict of {team: elo_rating} after all past games
         current_ratings — dict of {team: {"off": float, "def": float}}
         future_games    — dataframe of upcoming games
+        h2h_residuals   — optional DataFrame from compute_h2h_residuals; adds matchup bias
 
     Returns:
         predictions dataframe
     """
+    # Build a lookup {(home, away): avg_residual} for quick access
+    h2h_lookup = {}
+    if h2h_residuals is not None:
+        for _, r in h2h_residuals.iterrows():
+            h2h_lookup[(r["home_team"], r["away_team"])] = r["adj_residual"]
     from src.elo import DEFAULT_RATING, HOME_ADVANTAGE, expected_win_prob
     from src.data_prep import LEAGUE_AVG_SCORE
 
@@ -111,6 +155,9 @@ def predict_games(model, features, current_elo, current_ratings, home_advantages
         X = np.array([[feature_values[f] for f in features]])
         predicted_margin = model.predict(X)[0]
 
+        h2h_bias = h2h_lookup.get((home, away), 0.0)
+        adjusted_margin = predicted_margin + h2h_bias
+
         rows.append({
             "date":             game["Date"],
             "round":            game["Round Number"],
@@ -120,8 +167,9 @@ def predict_games(model, features, current_elo, current_ratings, home_advantages
             "home_elo":         round(r_home, 1),
             "away_elo":         round(r_away, 1),
             "win_prob_home":    round(e_home, 3),
-            "predicted_margin": round(predicted_margin, 1),
-            "predicted_winner": home if predicted_margin > 0 else away,
+            "predicted_margin": round(adjusted_margin, 1),
+            "h2h_bias":         round(h2h_bias, 1),
+            "predicted_winner": home if adjusted_margin > 0 else away,
         })
 
     return pd.DataFrame(rows).sort_values("date").reset_index(drop=True)
