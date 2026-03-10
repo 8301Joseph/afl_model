@@ -82,6 +82,8 @@
     .tab.past-tab { color: #a1a1aa; }
     .tab.past-tab:hover { border-color: var(--muted); color: var(--muted); }
     .tab.past-tab.active { background: var(--muted); border-color: var(--muted); color: #fff; }
+    .tab.future-tab { color: #d4d4d8; border-color: #f0f0f1; cursor: not-allowed; }
+    .tab.future-tab:hover { border-color: #f0f0f1; color: #d4d4d8; }
 
     /* Games grid */
     .games {
@@ -393,8 +395,14 @@
     function renderTabs(allRounds, pastSet) {
       document.getElementById('tabs').innerHTML = allRounds.map(r => {
         const isPast = pastSet.has(r);
-        const cls = ['tab', isPast ? 'past-tab' : '', r === active ? 'active' : ''].filter(Boolean).join(' ');
-        return `<button class="${cls}" onclick="pick(${JSON.stringify(r)}, this)">Rd ${r}</button>`;
+        const isFuture = !isPast && r !== active;
+        const cls = ['tab',
+          isPast ? 'past-tab' : '',
+          isFuture ? 'future-tab' : '',
+          r === active ? 'active' : ''
+        ].filter(Boolean).join(' ');
+        const onclick = isFuture ? '' : `onclick="pick(${JSON.stringify(r)}, this)"`;
+        return `<button class="${cls}" ${onclick}>Rd ${r}</button>`;
       }).join('');
     }
 

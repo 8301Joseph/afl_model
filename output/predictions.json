@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-09T22:52:56.500503Z",
+  "generated_at": "2026-03-10T15:00:31.435592Z",
   "predictions": [
     {
       "date": "2026-03-12T08:30:00",
@@ -2880,6 +2880,116 @@
       "predicted_winner": "Collingwood",
       "actual_winner": "Collingwood",
       "correct": true
+    }
+  ],
+  "ratings": [
+    {
+      "team": "Brisbane Lions",
+      "elo": 1782.9,
+      "off": 109.8,
+      "def": 69.7
+    },
+    {
+      "team": "GWS Giants",
+      "elo": 1690.4,
+      "off": 111.6,
+      "def": 88.5
+    },
+    {
+      "team": "Western Bulldogs",
+      "elo": 1666.2,
+      "off": 115.5,
+      "def": 82.0
+    },
+    {
+      "team": "Gold Coast Suns",
+      "elo": 1655.6,
+      "off": 95.1,
+      "def": 72.8
+    },
+    {
+      "team": "Collingwood",
+      "elo": 1655.3,
+      "off": 80.0,
+      "def": 73.8
+    },
+    {
+      "team": "Hawthorn",
+      "elo": 1654.7,
+      "off": 96.5,
+      "def": 81.0
+    },
+    {
+      "team": "Fremantle",
+      "elo": 1639.0,
+      "off": 88.8,
+      "def": 79.5
+    },
+    {
+      "team": "Adelaide Crows",
+      "elo": 1635.8,
+      "off": 83.5,
+      "def": 82.9
+    },
+    {
+      "team": "Geelong Cats",
+      "elo": 1629.6,
+      "off": 101.0,
+      "def": 94.2
+    },
+    {
+      "team": "Sydney Swans",
+      "elo": 1564.5,
+      "off": 96.5,
+      "def": 77.6
+    },
+    {
+      "team": "Carlton",
+      "elo": 1404.9,
+      "off": 82.7,
+      "def": 94.5
+    },
+    {
+      "team": "Port Adelaide",
+      "elo": 1404.5,
+      "off": 75.4,
+      "def": 94.3
+    },
+    {
+      "team": "St Kilda",
+      "elo": 1384.7,
+      "off": 78.1,
+      "def": 87.9
+    },
+    {
+      "team": "Melbourne",
+      "elo": 1350.5,
+      "off": 90.8,
+      "def": 85.2
+    },
+    {
+      "team": "North Melbourne",
+      "elo": 1298.6,
+      "off": 93.6,
+      "def": 110.9
+    },
+    {
+      "team": "Essendon",
+      "elo": 1240.8,
+      "off": 63.4,
+      "def": 107.6
+    },
+    {
+      "team": "Richmond",
+      "elo": 1222.6,
+      "off": 60.7,
+      "def": 94.4
+    },
+    {
+      "team": "West Coast Eagles",
+      "elo": 1119.4,
+      "off": 61.4,
+      "def": 107.9
     }
   ]
 }
