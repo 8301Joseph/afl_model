@@ -53,33 +53,6 @@
       .sidebar { order: -1; }
     }
 
-    /* Tabs */
-    .tabs {
-      display: flex;
-      gap: 0.25rem;
-      overflow-x: auto;
-      padding-bottom: 0.4rem;
-      margin-bottom: 0.8rem;
-      scrollbar-width: none;
-    }
-    .tabs::-webkit-scrollbar { display: none; }
-
-    .tab {
-      padding: 0.28rem 0.7rem;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--muted);
-      font-size: 0.76rem;
-      cursor: pointer;
-      white-space: nowrap;
-      font-family: inherit;
-      transition: all 0.1s;
-      user-select: none;
-    }
-    .tab:hover { border-color: var(--accent); color: var(--accent); }
-    .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-
     /* Games grid — 2 per row */
     .games {
       display: grid;
@@ -190,58 +163,6 @@
     .lt tr:last-child td { border-bottom: none; }
     .lt .divrow td { padding: 1px; background: var(--border); }
 
-    /* Past results */
-    .past { margin-top: 1.1rem; }
-
-    .sec-head {
-      display: flex;
-      align-items: center;
-      gap: 0.55rem;
-      margin-bottom: 0.55rem;
-    }
-    .sec-head h2 { font-size: 0.875rem; font-weight: 600; }
-
-    .badge {
-      font-size: 0.66rem;
-      padding: 0.15rem 0.45rem;
-      border-radius: 999px;
-      background: #eff6ff;
-      color: var(--accent);
-      font-weight: 500;
-    }
-
-    .tbl-wrap {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      overflow-x: auto;
-    }
-
-    .rt { width: 100%; border-collapse: collapse; font-size: 0.73rem; }
-
-    .rt th {
-      padding: 0.4rem 0.65rem;
-      text-align: left;
-      font-weight: 500;
-      color: var(--muted);
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-      background: #fafafa;
-    }
-
-    .rt td {
-      padding: 0.42rem 0.65rem;
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-    }
-    .rt tr:last-child td { border-bottom: none; }
-    .rt tr:hover td { background: #fafafa; }
-
-    .ok { color: var(--green); font-weight: 700; }
-    .no { color: var(--red); font-weight: 700; }
     .empty { color: var(--muted); font-style: italic; padding: 0.875rem; font-size: 0.8rem; }
     #err { color: var(--red); padding: 1.5rem; }
   </style>
@@ -255,9 +176,7 @@
 
   <div class="wrap">
     <main>
-      <div id="tabs" class="tabs"></div>
       <div id="games" class="games"></div>
-      <div id="past" class="past"></div>
       <div id="err"></div>
     </main>
 
@@ -272,12 +191,11 @@
 
     async function init() {
       try {
-        const [pr, lr, rr] = await Promise.all([
-          fetch('/predictions'), fetch('/ladder'), fetch('/results')
+        const [pr, lr] = await Promise.all([
+          fetch('/predictions'), fetch('/ladder')
         ]);
         const pd = await pr.json();
         const ld = await lr.json();
-        const rd = await rr.json();
 
         all = pd.predictions || [];
 
@@ -289,30 +207,15 @@
 
         if (rounds.length) {
           active = rounds[0];
-          renderTabs(rounds);
           renderGames(all.filter(g => g.round === active));
         } else {
           document.getElementById('games').innerHTML = '<p class="empty">No upcoming games.</p>';
         }
 
         renderLadder(ld.ladder || []);
-        renderPast(rd.results || []);
       } catch (e) {
         document.getElementById('err').textContent = 'Error loading data: ' + e.message;
       }
-    }
-
-    function renderTabs(rounds) {
-      document.getElementById('tabs').innerHTML = rounds.map(r =>
-        `<button class="tab${r === active ? ' active' : ''}" onclick="pick(${JSON.stringify(r)}, this)">Rd ${r}</button>`
-      ).join('');
-    }
-
-    function pick(r, el) {
-      active = r;
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      el.classList.add('active');
-      renderGames(all.filter(g => g.round === r));
     }
 
     function renderGames(games) {
@@ -362,39 +265,6 @@
           <thead><tr><th>#</th><th>Team</th><th>P</th><th>Pts</th><th>%</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>`;
-    }
-
-    function renderPast(results) {
-      const el = document.getElementById('past');
-      if (!results.length) {
-        el.innerHTML = `<div class="sec-head"><h2>Past Results</h2></div>
-          <div class="tbl-wrap"><p class="empty">No past games yet this season.</p></div>`;
-        return;
-      }
-      const correct = results.filter(r => r.correct).length;
-      const pct = Math.round(correct / results.length * 100);
-      const rows = results.map(r => `
-        <tr>
-          <td>Rd ${r.round}</td>
-          <td>${fdate(r.date)}</td>
-          <td style="font-weight:500">${r.home_team}</td>
-          <td>${r.home_score}–${r.away_score}</td>
-          <td style="font-weight:500">${r.away_team}</td>
-          <td>${r.predicted_winner}</td>
-          <td>${Math.round(r.win_prob_home * 100)}%</td>
-          <td>${r.correct ? '<span class="ok">✓</span>' : '<span class="no">✗</span>'}</td>
-        </tr>`).join('');
-      el.innerHTML = `
-        <div class="sec-head">
-          <h2>Past Results</h2>
-          <span class="badge">${correct}/${results.length} correct (${pct}%)</span>
-        </div>
-        <div class="tbl-wrap">
-          <table class="rt">
-            <thead><tr><th>Rd</th><th>Date</th><th>Home</th><th>Score</th><th>Away</th><th>Predicted</th><th>Prob</th><th></th></tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>`;
     }
 
     function fdate(iso) {
