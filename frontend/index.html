@@ -37,6 +37,7 @@
     header h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.3px; }
     header .sub { font-size: 0.78rem; color: #a1a1aa; }
     header .ts { font-size: 0.72rem; color: #52525b; margin-left: auto; }
+    header .tips { font-size: 0.72rem; color: #a1a1aa; }
 
     .wrap {
       max-width: 900px;
@@ -295,6 +296,7 @@
   <header>
     <h1>Prooty</h1>
     <span class="sub">AFL 2026 Predictions</span>
+    <span class="tips" id="tips"></span>
     <span class="ts" id="ts"></span>
   </header>
 
@@ -363,6 +365,12 @@
           document.getElementById('ts').textContent = 'Updated ' + ago(pd.generated_at);
         }
 
+        const pastList = rd.results || [];
+        if (pastList.length) {
+          const correct = pastList.filter(g => g.correct).length;
+          document.getElementById('tips').textContent = `${correct}/${pastList.length} tips`;
+        }
+
         const pastRounds   = [...new Set(past.map(g => g.round))].sort((a, b) => +a - +b);
         const futureRounds = [...new Set(future.map(g => g.round))].sort((a, b) => +a - +b);
         const allRounds    = [...new Set(all.map(g => g.round))].sort((a, b) => +a - +b);
@@ -387,7 +395,7 @@
       document.getElementById('tabs').innerHTML = visibleRounds.map(r => {
         const isPast = pastSet.has(r);
         const cls = ['tab', isPast ? 'past-tab' : '', r === active ? 'active' : ''].filter(Boolean).join(' ');
-        return `<button class="${cls}" onclick="pick(${JSON.stringify(r)}, this)">Rd ${r}</button>`;
+        return `<button class="${cls}" onclick="pick('${r}', this)">Rd ${r}</button>`;
       }).join('');
     }
 
