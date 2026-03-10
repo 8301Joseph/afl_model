@@ -55,7 +55,7 @@ def compute_past_results(feature_df, model, features, margin_std, h2h_residuals,
     return rows
 
 
-def save_output(predictions, ladder, past_results, path="output/predictions.json"):
+def save_output(predictions, ladder, past_results, current_elo, current_ratings, path="output/predictions.json"):
     """Save predictions and ladder to JSON for the API to serve."""
     def _serialize(val):
         if isinstance(val, (date, datetime)):
@@ -77,11 +77,22 @@ def save_output(predictions, ladder, past_results, path="output/predictions.json
         for row in past_results
     ]
 
+    ratings_list = sorted([
+        {
+            "team": team,
+            "elo":  round(current_elo[team], 1),
+            "off":  round(current_ratings[team]["off"], 1),
+            "def":  round(current_ratings[team]["def"], 1),
+        }
+        for team in current_elo
+    ], key=lambda x: -x["elo"])
+
     output = {
         "generated_at": datetime.utcnow().isoformat() + "Z",
         "predictions": predictions_list,
         "ladder": ladder_list,
         "results": past_results_list,
+        "ratings": ratings_list,
     }
 
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -163,7 +174,7 @@ def main():
     print_ladder(ladder)
     save_ladder(ladder)
     past_results = compute_past_results(feature_df, model, features, margin_std, h2h_residuals, ratings_games)
-    save_output(predictions, ladder, past_results)
+    save_output(predictions, ladder, past_results, current_elo, current_ratings)
 
 
 if __name__ == "__main__":

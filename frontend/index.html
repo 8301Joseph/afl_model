@@ -53,7 +53,37 @@
       .sidebar { order: -1; }
     }
 
-    /* Games grid — 2 per row */
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0.25rem;
+      overflow-x: auto;
+      padding-bottom: 0.4rem;
+      margin-bottom: 0.8rem;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+
+    .tab {
+      padding: 0.28rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.76rem;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+      transition: all 0.1s;
+      user-select: none;
+    }
+    .tab:hover { border-color: var(--accent); color: var(--accent); }
+    .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .tab.past-tab { color: #a1a1aa; }
+    .tab.past-tab:hover { border-color: var(--muted); color: var(--muted); }
+    .tab.past-tab.active { background: var(--muted); border-color: var(--muted); color: #fff; }
+
+    /* Games grid */
     .games {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
@@ -66,6 +96,7 @@
       border-radius: var(--r);
       padding: 0.75rem 0.875rem;
     }
+    .card.done { background: #fafafa; }
 
     .card-meta {
       font-size: 0.68rem;
@@ -76,7 +107,6 @@
       text-overflow: ellipsis;
     }
 
-    /* 3-col matchup layout */
     .matchup {
       display: grid;
       grid-template-columns: 1fr 1.4fr 1fr;
@@ -89,7 +119,9 @@
     .team.away { align-items: flex-end; text-align: right; }
 
     .t-name { font-size: 0.82rem; font-weight: 600; line-height: 1.25; }
-    .t-name.w { color: var(--accent); }
+    .t-name.tip  { color: var(--accent); }
+    .t-name.win  { color: var(--green); }
+    .t-name.loss { color: var(--red); }
     .t-elo { font-size: 0.65rem; color: var(--muted); }
 
     .prob-col { display: flex; flex-direction: column; gap: 0.2rem; align-items: stretch; }
@@ -116,8 +148,13 @@
       color: var(--muted);
       padding-top: 0.35rem;
       border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .card-result strong { color: var(--text); }
+    .ok { color: var(--green); font-weight: 700; }
+    .no { color: var(--red); font-weight: 700; }
 
     /* Sidebar */
     .sidebar { position: sticky; top: 1rem; }
@@ -138,7 +175,23 @@
       color: var(--muted);
       border-bottom: 1px solid var(--border);
       background: #fafafa;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
+
+    .panel-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.1rem 0.4rem;
+      font-size: 0.62rem;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.1s;
+    }
+    .panel-btn:hover { border-color: var(--accent); color: var(--accent); }
 
     .lt { width: 100%; border-collapse: collapse; font-size: 0.72rem; }
 
@@ -163,6 +216,87 @@
     .lt tr:last-child td { border-bottom: none; }
     .lt .divrow td { padding: 1px; background: var(--border); }
 
+    /* Ratings modal */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .overlay.open { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border-radius: var(--r);
+      width: 100%;
+      max-width: 480px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    }
+
+    .modal-head {
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: #fafafa;
+    }
+    .modal-head h3 { font-size: 0.875rem; font-weight: 600; }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      color: var(--muted);
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.1rem 0.3rem;
+    }
+    .modal-close:hover { color: var(--text); }
+
+    .modal-sort {
+      display: flex;
+      gap: 0.3rem;
+      padding: 0.5rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: #fafafa;
+    }
+    .sort-btn {
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.72rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .sort-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .rt { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .rt th {
+      padding: 0.35rem 1rem;
+      text-align: right;
+      font-weight: 500;
+      color: var(--muted);
+      font-size: 0.68rem;
+      border-bottom: 1px solid var(--border);
+      background: #fafafa;
+    }
+    .rt th:first-child { text-align: left; }
+    .rt td {
+      padding: 0.38rem 1rem;
+      text-align: right;
+      border-bottom: 1px solid var(--border);
+    }
+    .rt td:first-child { text-align: left; font-weight: 500; }
+    .rt tr:last-child td { border-bottom: none; }
+
     .empty { color: var(--muted); font-style: italic; padding: 0.875rem; font-size: 0.8rem; }
     #err { color: var(--red); padding: 1.5rem; }
   </style>
@@ -176,60 +310,133 @@
 
   <div class="wrap">
     <main>
+      <div id="tabs" class="tabs"></div>
       <div id="games" class="games"></div>
       <div id="err"></div>
     </main>
 
     <aside class="sidebar">
-      <div id="ladder" class="panel"></div>
+      <div class="panel">
+        <div class="panel-head">
+          Projected Ladder
+          <button class="panel-btn" onclick="openRatings()">Team Ratings</button>
+        </div>
+        <div id="ladder"></div>
+      </div>
     </aside>
+  </div>
+
+  <!-- Ratings modal -->
+  <div class="overlay" id="overlay" onclick="closeOnBg(event)">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Team Ratings</h3>
+        <button class="modal-close" onclick="closeRatings()">✕</button>
+      </div>
+      <div class="modal-sort">
+        <button class="sort-btn active" onclick="sortRatings('elo', this)">Elo</button>
+        <button class="sort-btn" onclick="sortRatings('off', this)">Offence</button>
+        <button class="sort-btn" onclick="sortRatings('def', this)">Defence</button>
+      </div>
+      <div style="overflow-y:auto; max-height:60vh;">
+        <table class="rt">
+          <thead><tr><th>Team</th><th>Elo</th><th>Off</th><th>Def</th></tr></thead>
+          <tbody id="ratings-body"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <script>
     let all = [];
     let active = null;
+    let ratingsData = [];
+    let sortKey = 'elo';
 
     async function init() {
       try {
-        const [pr, lr] = await Promise.all([
-          fetch('/predictions'), fetch('/ladder')
+        const [pr, lr, rr, rtr] = await Promise.all([
+          fetch('/predictions'), fetch('/ladder'), fetch('/results'), fetch('/ratings')
         ]);
-        const pd = await pr.json();
-        const ld = await lr.json();
+        const pd  = await pr.json();
+        const ld  = await lr.json();
+        const rd  = await rr.json();
+        const rtd = await rtr.json();
 
-        all = pd.predictions || [];
+        const future = (pd.predictions || []).map(g => ({ ...g, type: 'future' }));
+        const past   = (rd.results    || []).map(g => ({ ...g, type: 'past' }));
+        all = [...past, ...future];
+        ratingsData = rtd.ratings || [];
 
         if (pd.generated_at) {
           document.getElementById('ts').textContent = 'Updated ' + ago(pd.generated_at);
         }
 
-        const rounds = [...new Set(all.map(g => g.round))].sort((a, b) => +a - +b);
+        const pastRounds   = [...new Set(past.map(g => g.round))].sort((a, b) => +a - +b);
+        const futureRounds = [...new Set(future.map(g => g.round))].sort((a, b) => +a - +b);
+        const allRounds    = [...new Set(all.map(g => g.round))].sort((a, b) => +a - +b);
 
-        if (rounds.length) {
-          active = rounds[0];
+        if (allRounds.length) {
+          active = futureRounds.length ? futureRounds[0] : allRounds[allRounds.length - 1];
+          renderTabs(allRounds, new Set(pastRounds));
           renderGames(all.filter(g => g.round === active));
         } else {
-          document.getElementById('games').innerHTML = '<p class="empty">No upcoming games.</p>';
+          document.getElementById('games').innerHTML = '<p class="empty">No games.</p>';
         }
 
         renderLadder(ld.ladder || []);
       } catch (e) {
-        document.getElementById('err').textContent = 'Error loading data: ' + e.message;
+        document.getElementById('err').textContent = 'Error: ' + e.message;
       }
+    }
+
+    function renderTabs(allRounds, pastSet) {
+      document.getElementById('tabs').innerHTML = allRounds.map(r => {
+        const isPast = pastSet.has(r);
+        const cls = ['tab', isPast ? 'past-tab' : '', r === active ? 'active' : ''].filter(Boolean).join(' ');
+        return `<button class="${cls}" onclick="pick(${JSON.stringify(r)}, this)">Rd ${r}</button>`;
+      }).join('');
+    }
+
+    function pick(r, el) {
+      active = r;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      renderGames(all.filter(g => g.round === r));
     }
 
     function renderGames(games) {
       const el = document.getElementById('games');
       if (!games.length) { el.innerHTML = '<p class="empty">No games.</p>'; return; }
-      el.innerHTML = games.map(g => {
-        const hp = Math.round(g.win_prob_home * 100);
-        const ap = 100 - hp;
-        const hw = g.predicted_winner === g.home_team;
-        return `<div class="card">
+
+      el.innerHTML = [...games].sort((a, b) => new Date(a.date) - new Date(b.date)).map(g => {
+        const hp   = Math.round(g.win_prob_home * 100);
+        const ap   = 100 - hp;
+        const isPast = g.type === 'past';
+        const homeWon = isPast && g.actual_winner === g.home_team;
+        const awayWon = isPast && g.actual_winner === g.away_team;
+        const homeTipped = g.predicted_winner === g.home_team;
+
+        // Colour logic for past games: green = actual winner, red = wrong tip
+        const homeCls = isPast
+          ? (homeWon ? ' win' : (homeTipped ? ' loss' : ''))
+          : (homeTipped ? ' tip' : '');
+        const awayCls = isPast
+          ? (awayWon ? ' win' : (!homeTipped ? ' loss' : ''))
+          : (!homeTipped ? ' tip' : '');
+
+        const result = isPast
+          ? `<div class="card-result">
+               <span>Tipped: <strong>${g.predicted_winner}</strong> (${hp}%)</span>
+               <span class="${g.correct ? 'ok' : 'no'}">${g.correct ? '✓' : '✗'}&nbsp;${g.home_score}–${g.away_score}</span>
+             </div>`
+          : `<div class="card-result"><strong>${g.predicted_winner}</strong> by ${Math.abs(g.predicted_margin)} pts</div>`;
+
+        return `<div class="card${isPast ? ' done' : ''}">
           <div class="card-meta">${fdate(g.date)}${g.location ? ' &middot; ' + g.location : ''}</div>
           <div class="matchup">
             <div class="team home">
-              <span class="t-name${hw ? ' w' : ''}">${g.home_team}</span>
+              <span class="t-name${homeCls}">${g.home_team}</span>
               <span class="t-elo">Elo ${g.home_elo}</span>
             </div>
             <div class="prob-col">
@@ -237,11 +444,11 @@
               <div class="prob-nums"><span>${hp}%</span><span>${ap}%</span></div>
             </div>
             <div class="team away">
-              <span class="t-name${!hw ? ' w' : ''}">${g.away_team}</span>
+              <span class="t-name${awayCls}">${g.away_team}</span>
               <span class="t-elo">Elo ${g.away_elo}</span>
             </div>
           </div>
-          <div class="card-result"><strong>${g.predicted_winner}</strong> by ${Math.abs(g.predicted_margin)} pts</div>
+          ${result}
         </div>`;
       }).join('');
     }
@@ -250,21 +457,48 @@
       const el = document.getElementById('ladder');
       if (!ladder.length) { el.innerHTML = '<p class="empty">Unavailable.</p>'; return; }
       const rows = ladder.map(t =>
-        (t.position === 9 ? '<tr class="divrow"><td colspan="5"></td></tr>' : '') +
+        (t.position === 9 ? '<tr class="divrow"><td colspan="4"></td></tr>' : '') +
+        `<tr><td>${t.position}</td><td>${t.team}</td><td>${t.wins}</td><td>${t.pct}%</td></tr>`
+      ).join('');
+      el.innerHTML = `<table class="lt">
+        <thead><tr><th>#</th><th>Team</th><th>xW</th><th>%</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    }
+
+    function openRatings() {
+      sortRatingsTable();
+      document.getElementById('overlay').classList.add('open');
+    }
+
+    function closeRatings() {
+      document.getElementById('overlay').classList.remove('open');
+    }
+
+    function closeOnBg(e) {
+      if (e.target === document.getElementById('overlay')) closeRatings();
+    }
+
+    function sortRatings(key, btn) {
+      sortKey = key;
+      document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      sortRatingsTable();
+    }
+
+    function sortRatingsTable() {
+      const sorted = [...ratingsData].sort((a, b) => {
+        if (sortKey === 'def') return a.def - b.def; // lower def rating = better defence
+        return b[sortKey] - a[sortKey];
+      });
+      document.getElementById('ratings-body').innerHTML = sorted.map((t, i) =>
         `<tr>
-          <td>${t.position}</td>
           <td>${t.team}</td>
-          <td>${t.played}</td>
-          <td>${t.pts}</td>
-          <td>${t.pct}%</td>
+          <td>${t.elo}</td>
+          <td>${t.off}</td>
+          <td>${t.def}</td>
         </tr>`
       ).join('');
-      el.innerHTML = `
-        <div class="panel-head">Projected Ladder</div>
-        <table class="lt">
-          <thead><tr><th>#</th><th>Team</th><th>P</th><th>Pts</th><th>%</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>`;
     }
 
     function fdate(iso) {

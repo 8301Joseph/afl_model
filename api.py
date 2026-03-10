@@ -62,6 +62,15 @@ def get_results():
     }
 
 
+@app.get("/ratings")
+def get_ratings():
+    data = _load()
+    return {
+        "generated_at": data["generated_at"],
+        "ratings": data.get("ratings", []),
+    }
+
+
 @app.get("/round/{round_number}")
 def get_round(round_number: int):
     data = _load()
