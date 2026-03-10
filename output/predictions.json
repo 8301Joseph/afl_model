@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-10T15:00:31.435592Z",
+  "generated_at": "2026-03-10T15:45:57.271823Z",
   "predictions": [
     {
       "date": "2026-03-12T08:30:00",
@@ -2814,8 +2814,11 @@
     {
       "date": "2026-03-05T08:30:00",
       "round": "OR",
+      "location": "SCG",
       "home_team": "Sydney Swans",
       "away_team": "Carlton",
+      "home_elo": 1517.5,
+      "away_elo": 1451.9,
       "home_score": 132,
       "away_score": 69,
       "actual_margin": 63,
@@ -2828,8 +2831,11 @@
     {
       "date": "2026-03-06T09:05:00",
       "round": "OR",
+      "location": "People First Stadium",
       "home_team": "Gold Coast Suns",
       "away_team": "Geelong Cats",
+      "home_elo": 1566.5,
+      "away_elo": 1718.7,
       "home_score": 125,
       "away_score": 69,
       "actual_margin": 56,
@@ -2842,8 +2848,11 @@
     {
       "date": "2026-03-07T05:15:00",
       "round": "OR",
+      "location": "ENGIE Stadium",
       "home_team": "GWS Giants",
       "away_team": "Hawthorn",
+      "home_elo": 1626.8,
+      "away_elo": 1718.3,
       "home_score": 122,
       "away_score": 95,
       "actual_margin": 27,
@@ -2856,8 +2865,11 @@
     {
       "date": "2026-03-07T08:35:00",
       "round": "OR",
+      "location": "Gabba",
       "home_team": "Brisbane Lions",
       "away_team": "Western Bulldogs",
+      "home_elo": 1835.2,
+      "away_elo": 1613.8,
       "home_score": 106,
       "away_score": 111,
       "actual_margin": -5,
@@ -2870,8 +2882,11 @@
     {
       "date": "2026-03-08T08:20:00",
       "round": "OR",
+      "location": "MCG",
       "home_team": "St Kilda",
       "away_team": "Collingwood",
+      "home_elo": 1410.4,
+      "away_elo": 1629.7,
       "home_score": 66,
       "away_score": 78,
       "actual_margin": -12,

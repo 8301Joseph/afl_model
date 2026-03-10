@@ -19,8 +19,8 @@ def compute_past_results(feature_df, model, features, margin_std, h2h_residuals,
         return []
 
     rg_rounds = (
-        ratings_games[ratings_games["season"] == 2026][["Home Team", "Away Team", "Date", "Round Number"]]
-        .rename(columns={"Home Team": "home_team", "Away Team": "away_team", "Date": "date", "Round Number": "round"})
+        ratings_games[ratings_games["season"] == 2026][["Home Team", "Away Team", "Date", "Round Number", "Location"]]
+        .rename(columns={"Home Team": "home_team", "Away Team": "away_team", "Date": "date", "Round Number": "round", "Location": "location"})
     )
     df_2026 = df_2026.merge(rg_rounds, on=["home_team", "away_team", "date"], how="left")
     df_2026["round"] = df_2026["round"].fillna("")
@@ -41,8 +41,11 @@ def compute_past_results(feature_df, model, features, margin_std, h2h_residuals,
         rows.append({
             "date":             row["date"],
             "round":            row["round"],
+            "location":         row.get("location", ""),
             "home_team":        row["home_team"],
             "away_team":        row["away_team"],
+            "home_elo":         round(float(row["home_elo"]), 1),
+            "away_elo":         round(float(row["away_elo"]), 1),
             "home_score":       int(row["home_score"]),
             "away_score":       int(row["away_score"]),
             "actual_margin":    int(row["margin"]),

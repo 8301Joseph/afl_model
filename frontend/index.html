@@ -261,25 +261,6 @@
     }
     .modal-close:hover { color: var(--text); }
 
-    .modal-sort {
-      display: flex;
-      gap: 0.3rem;
-      padding: 0.5rem 1rem;
-      border-bottom: 1px solid var(--border);
-      background: #fafafa;
-    }
-    .sort-btn {
-      padding: 0.2rem 0.6rem;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--muted);
-      font-size: 0.72rem;
-      cursor: pointer;
-      font-family: inherit;
-    }
-    .sort-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-
     .rt { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
     .rt th {
       padding: 0.35rem 1rem;
@@ -289,8 +270,15 @@
       font-size: 0.68rem;
       border-bottom: 1px solid var(--border);
       background: #fafafa;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
     }
     .rt th:first-child { text-align: left; }
+    .rt th:hover { color: var(--accent); }
+    .rt th.sort-active { color: var(--accent); }
+    .rt th .tri { font-size: 0.55rem; margin-left: 0.2rem; opacity: 0.4; }
+    .rt th.sort-active .tri { opacity: 1; }
     .rt td {
       padding: 0.38rem 1rem;
       text-align: right;
@@ -335,14 +323,14 @@
         <h3>Team Ratings</h3>
         <button class="modal-close" onclick="closeRatings()">✕</button>
       </div>
-      <div class="modal-sort">
-        <button class="sort-btn active" onclick="sortRatings('elo', this)">Elo</button>
-        <button class="sort-btn" onclick="sortRatings('off', this)">Offence</button>
-        <button class="sort-btn" onclick="sortRatings('def', this)">Defence</button>
-      </div>
       <div style="overflow-y:auto; max-height:60vh;">
         <table class="rt">
-          <thead><tr><th>Team</th><th>Elo</th><th>Off</th><th>Def</th></tr></thead>
+          <thead><tr id="ratings-head">
+            <th onclick="sortRatings('team')" data-key="team">Team <span class="tri">▲</span></th>
+            <th onclick="sortRatings('elo')"  data-key="elo"  class="sort-active">Elo <span class="tri">▼</span></th>
+            <th onclick="sortRatings('off')"  data-key="off">Off <span class="tri">▲</span></th>
+            <th onclick="sortRatings('def')"  data-key="def">Def <span class="tri">▲</span></th>
+          </tr></thead>
           <tbody id="ratings-body"></tbody>
         </table>
       </div>
@@ -354,6 +342,7 @@
     let active = null;
     let ratingsData = [];
     let sortKey = 'elo';
+    let sortAsc = false; // elo default: descending
 
     async function init() {
       try {
@@ -393,16 +382,12 @@
     }
 
     function renderTabs(allRounds, pastSet) {
-      document.getElementById('tabs').innerHTML = allRounds.map(r => {
+      // Only show past rounds + the current active round (future rounds are not navigable)
+      const visibleRounds = allRounds.filter(r => pastSet.has(r) || r === active);
+      document.getElementById('tabs').innerHTML = visibleRounds.map(r => {
         const isPast = pastSet.has(r);
-        const isFuture = !isPast && r !== active;
-        const cls = ['tab',
-          isPast ? 'past-tab' : '',
-          isFuture ? 'future-tab' : '',
-          r === active ? 'active' : ''
-        ].filter(Boolean).join(' ');
-        const onclick = isFuture ? '' : `onclick="pick(${JSON.stringify(r)}, this)"`;
-        return `<button class="${cls}" ${onclick}>Rd ${r}</button>`;
+        const cls = ['tab', isPast ? 'past-tab' : '', r === active ? 'active' : ''].filter(Boolean).join(' ');
+        return `<button class="${cls}" onclick="pick(${JSON.stringify(r)}, this)">Rd ${r}</button>`;
       }).join('');
     }
 
@@ -445,7 +430,7 @@
           <div class="matchup">
             <div class="team home">
               <span class="t-name${homeCls}">${g.home_team}</span>
-              <span class="t-elo">Elo ${g.home_elo}</span>
+              ${isPast ? '' : `<span class="t-elo">Elo ${g.home_elo}</span>`}
             </div>
             <div class="prob-col">
               <div class="bar"><div class="bar-h" style="width:${hp}%"></div><div class="bar-a"></div></div>
@@ -453,7 +438,7 @@
             </div>
             <div class="team away">
               <span class="t-name${awayCls}">${g.away_team}</span>
-              <span class="t-elo">Elo ${g.away_elo}</span>
+              ${isPast ? '' : `<span class="t-elo">Elo ${g.away_elo}</span>`}
             </div>
           </div>
           ${result}
@@ -475,7 +460,7 @@
     }
 
     function openRatings() {
-      sortRatingsTable();
+      sortRatingsTable(); // renders body + syncs header triangles
       document.getElementById('overlay').classList.add('open');
     }
 
@@ -487,19 +472,35 @@
       if (e.target === document.getElementById('overlay')) closeRatings();
     }
 
-    function sortRatings(key, btn) {
-      sortKey = key;
-      document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+    function sortRatings(key) {
+      if (sortKey === key) {
+        sortAsc = !sortAsc;
+      } else {
+        sortKey = key;
+        // Sensible defaults: team A→Z, def lower-is-better ascending, others descending
+        sortAsc = (key === 'team' || key === 'def');
+      }
       sortRatingsTable();
     }
 
     function sortRatingsTable() {
       const sorted = [...ratingsData].sort((a, b) => {
-        if (sortKey === 'def') return a.def - b.def; // lower def rating = better defence
-        return b[sortKey] - a[sortKey];
+        let cmp;
+        if (sortKey === 'team') cmp = a.team.localeCompare(b.team);
+        else cmp = a[sortKey] - b[sortKey];
+        return sortAsc ? cmp : -cmp;
       });
-      document.getElementById('ratings-body').innerHTML = sorted.map((t, i) =>
+
+      // Update header indicators
+      document.querySelectorAll('#ratings-head th').forEach(th => {
+        const key = th.dataset.key;
+        th.classList.toggle('sort-active', key === sortKey);
+        th.querySelector('.tri').textContent = key === sortKey
+          ? (sortAsc ? '▲' : '▼')
+          : '▲';
+      });
+
+      document.getElementById('ratings-body').innerHTML = sorted.map(t =>
         `<tr>
           <td>${t.team}</td>
           <td>${t.elo}</td>
