@@ -42,6 +42,8 @@ async def _daily_sync_loop():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Sync on startup so a fresh deploy immediately picks up latest results
+    asyncio.create_task(_run_sync())
     asyncio.create_task(_daily_sync_loop())
     yield
 
