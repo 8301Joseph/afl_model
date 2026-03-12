@@ -1,7 +1,7 @@
 import asyncio
 import json
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -15,13 +15,15 @@ FRONTEND = Path("frontend/index.html")
 # Background sync — runs daily at 06:00 AEST (20:00 UTC)
 # ---------------------------------------------------------------------------
 
-SYNC_HOUR_UTC = 20  # 06:00 AEST = 20:00 UTC
+SYNC_HOUR_UTC = 20      # 06:00 AEST = 20:00 UTC
+RETRY_INTERVAL_MIN = 30  # retry every 30 min if no new results
+RETRY_MAX_HOURS = 4      # stop retrying after 4 hours (10am AEST)
 
 
-async def _run_sync():
+async def _run_sync() -> bool:
     from sync import sync
     loop = asyncio.get_event_loop()
-    await loop.run_in_executor(None, sync)
+    return await loop.run_in_executor(None, sync)
 
 
 async def _daily_sync_loop():
@@ -29,15 +31,26 @@ async def _daily_sync_loop():
         now = datetime.now(timezone.utc)
         next_run = now.replace(hour=SYNC_HOUR_UTC, minute=0, second=0, microsecond=0)
         if now >= next_run:
-            # Already past today's window — schedule for tomorrow
-            next_run = next_run.replace(day=next_run.day + 1)
+            next_run += timedelta(days=1)
         wait = (next_run - now).total_seconds()
         print(f"[sync] Next scheduled sync in {wait/3600:.1f}h ({next_run.strftime('%Y-%m-%d %H:%M UTC')})")
         await asyncio.sleep(wait)
-        try:
-            await _run_sync()
-        except Exception as e:
-            print(f"[sync] Scheduled sync error: {e}")
+
+        # Try once, then retry every 30 min for up to 4 hours if no new results
+        deadline = datetime.now(timezone.utc) + timedelta(hours=RETRY_MAX_HOURS)
+        attempt = 0
+        while datetime.now(timezone.utc) < deadline:
+            attempt += 1
+            try:
+                found = await _run_sync()
+            except Exception as e:
+                print(f"[sync] Scheduled sync error (attempt {attempt}): {e}")
+                found = False
+            if found:
+                print(f"[sync] Results found on attempt {attempt}.")
+                break
+            print(f"[sync] No new results (attempt {attempt}), retrying in {RETRY_INTERVAL_MIN}m...")
+            await asyncio.sleep(RETRY_INTERVAL_MIN * 60)
 
 
 @asynccontextmanager
