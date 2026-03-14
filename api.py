@@ -12,12 +12,36 @@ DATA_FILE = Path("output/predictions.json")
 FRONTEND = Path("frontend/index.html")
 
 # ---------------------------------------------------------------------------
-# Background sync — runs daily at 06:00 AEST (20:00 UTC)
+# Background sync schedule
+# Weekdays : start 20:00 UTC (06:00 AEST), retry for 4 h → covers night games
+# Weekends : start 01:00 UTC (noon AEDT), retry for 14 h → covers all-day games
 # ---------------------------------------------------------------------------
 
-SYNC_HOUR_UTC = 20      # 06:00 AEST = 20:00 UTC
-RETRY_INTERVAL_MIN = 30  # retry every 30 min if no new results
-RETRY_MAX_HOURS = 4      # stop retrying after 4 hours (10am AEST)
+RETRY_INTERVAL_MIN = 30
+
+# (start_hour_utc, retry_hours)  — indexed by weekday() of the AEST date
+#   0=Mon … 4=Fri → night-game window; 5=Sat, 6=Sun → all-day window
+_WEEKDAY_WINDOW = (20, 4)   # 06:00 AEST start, 4 h retry
+_WEEKEND_WINDOW = (2, 15)   # 1pm AEDT (02:00 UTC) start, 15 h retry (1pm→4am AEDT)
+
+AEST_OFFSET = timedelta(hours=10)  # UTC+10 — close enough for scheduling
+
+
+def _next_sync_window(now: datetime):
+    """Return (next_run_utc, retry_hours) for the next sync window."""
+    for days_ahead in range(3):
+        candidate_utc_day = (now + timedelta(days=days_ahead)).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+        aest_weekday = (candidate_utc_day + AEST_OFFSET).weekday()
+        start_hour, retry_hours = (
+            _WEEKEND_WINDOW if aest_weekday >= 5 else _WEEKDAY_WINDOW
+        )
+        candidate = candidate_utc_day.replace(hour=start_hour)
+        if candidate > now:
+            return candidate, retry_hours
+    # fallback (should never hit)
+    return now + timedelta(hours=1), 4
 
 
 async def _run_sync() -> bool:
@@ -29,22 +53,19 @@ async def _run_sync() -> bool:
 async def _daily_sync_loop():
     while True:
         now = datetime.now(timezone.utc)
-        next_run = now.replace(hour=SYNC_HOUR_UTC, minute=0, second=0, microsecond=0)
-        if now >= next_run:
-            next_run += timedelta(days=1)
+        next_run, retry_hours = _next_sync_window(now)
         wait = (next_run - now).total_seconds()
-        print(f"[sync] Next scheduled sync in {wait/3600:.1f}h ({next_run.strftime('%Y-%m-%d %H:%M UTC')})")
+        print(f"[sync] Next sync in {wait/3600:.1f}h ({next_run.strftime('%Y-%m-%d %H:%M UTC')}, window={retry_hours}h)")
         await asyncio.sleep(wait)
 
-        # Try once, then retry every 30 min for up to 4 hours if no new results
-        deadline = datetime.now(timezone.utc) + timedelta(hours=RETRY_MAX_HOURS)
+        deadline = datetime.now(timezone.utc) + timedelta(hours=retry_hours)
         attempt = 0
         while datetime.now(timezone.utc) < deadline:
             attempt += 1
             try:
                 found = await _run_sync()
             except Exception as e:
-                print(f"[sync] Scheduled sync error (attempt {attempt}): {e}")
+                print(f"[sync] Sync error (attempt {attempt}): {e}")
                 found = False
             if found:
                 print(f"[sync] Results found on attempt {attempt}.")
