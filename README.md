@@ -49,13 +49,20 @@ Result is `"home_score - away_score"` for completed games, empty for future game
 
 ## Website
 
-Live at **[web-production-f3a9e7.up.railway.app](https://web-production-f3a9e7.up.railway.app)**
+Live at **[prooty.site](https://prooty.site)**
 
 - Round-by-round predictions with win probability bars
 - Projected ladder
 - Past results vs model predictions with accuracy tracking
 
 Hosted on Railway. The server runs `main.py` on startup to generate fresh predictions, then serves them via a FastAPI backend. The frontend is a single HTML file served from the same server.
+
+Results are synced automatically from the Squiggle API on a schedule. Each sync reruns `main.py`, updating Elo ratings, off/def ratings, home advantages, H2H biases, and predictions:
+
+- **Weekdays** — starts 11:30pm AEST, retries every 30 min until 8am AEST
+- **Weekends** — starts 1pm AEDT, retries every 30 min until 4am AEDT
+
+A manual sync can be triggered any time via `POST /sync`.
 
 ## Usage
 
@@ -84,7 +91,9 @@ uvicorn api:app --reload
 | `GET /ladder` | Projected final ladder |
 | `GET /results` | Past 2026 games with predicted vs actual outcomes |
 | `GET /round/{n}` | Predictions for a specific round |
+| `GET /ratings` | Current Elo + off/def ratings for all teams |
 | `GET /health` | Health check |
+| `POST /sync` | Manually trigger a result sync and prediction regeneration |
 
 ## Project structure
 
@@ -123,5 +132,4 @@ ladder.txt       — latest projected ladder (plain text)
 *H2H residuals computed from all games — in-sample, so inflated.
 
 ## Planned improvements
-- Pull live data from Squiggle API instead of CSV
 - Try gradient boosting (e.g. XGBoost/LightGBM) instead of Ridge regression — captures non-linear feature interactions and may improve margin accuracy without manual feature engineering

@@ -13,16 +13,17 @@ FRONTEND = Path("frontend/index.html")
 
 # ---------------------------------------------------------------------------
 # Background sync schedule
-# Weekdays : start 20:00 UTC (06:00 AEST), retry for 4 h → covers night games
-# Weekends : start 01:00 UTC (noon AEDT), retry for 14 h → covers all-day games
+# Weekdays : start 13:30 UTC (11:30pm AEST), retry every 30 min → 8am AEST (22:00 UTC)
+# Weekends : start 02:00 UTC (1pm AEDT),   retry every 30 min → 4am AEDT (17:00 UTC)
 # ---------------------------------------------------------------------------
 
 RETRY_INTERVAL_MIN = 30
 
-# (start_hour_utc, retry_hours)  — indexed by weekday() of the AEST date
-#   0=Mon … 4=Fri → night-game window; 5=Sat, 6=Sun → all-day window
-_WEEKDAY_WINDOW = (20, 4)   # 06:00 AEST start, 4 h retry
-_WEEKEND_WINDOW = (2, 15)   # 1pm AEDT (02:00 UTC) start, 15 h retry (1pm→4am AEDT)
+# (start_hour_utc, start_minute_utc, retry_hours)
+#   Weekdays: 11:30pm AEST (13:30 UTC) → 8am AEST (22:00 UTC) = 8.5 h
+#   Weekends: 1pm AEDT (02:00 UTC) → 4am AEDT (17:00 UTC) = 15 h
+_WEEKDAY_WINDOW = (13, 30, 8.5)
+_WEEKEND_WINDOW = (2,  0,  15.0)
 
 AEST_OFFSET = timedelta(hours=10)  # UTC+10 — close enough for scheduling
 
@@ -34,10 +35,10 @@ def _next_sync_window(now: datetime):
             hour=0, minute=0, second=0, microsecond=0
         )
         aest_weekday = (candidate_utc_day + AEST_OFFSET).weekday()
-        start_hour, retry_hours = (
+        start_hour, start_min, retry_hours = (
             _WEEKEND_WINDOW if aest_weekday >= 5 else _WEEKDAY_WINDOW
         )
-        candidate = candidate_utc_day.replace(hour=start_hour)
+        candidate = candidate_utc_day.replace(hour=start_hour, minute=start_min)
         if candidate > now:
             return candidate, retry_hours
     # fallback (should never hit)
