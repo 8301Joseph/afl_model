@@ -426,10 +426,12 @@
           ? (awayWon ? ' win' : (!homeTipped ? ' loss' : ''))
           : (!homeTipped ? ' tip' : '');
 
+        const predMargin = Math.abs(Math.round(g.predicted_margin));
+        const actualMarginStr = (g.actual_margin > 0 ? '+' : '') + g.actual_margin;
         const result = isPast
           ? `<div class="card-result">
-               <span>Tipped: <strong>${g.predicted_winner}</strong> (${hp}%)</span>
-               <span class="${g.correct ? 'ok' : 'no'}">${g.correct ? '✓' : '✗'}&nbsp;${g.home_score}–${g.away_score}</span>
+               <span>Tipped: <strong>${g.predicted_winner}</strong> by ${predMargin} (${hp}%)</span>
+               <span class="${g.correct ? 'ok' : 'no'}">${g.correct ? '✓' : '✗'}&nbsp;${actualMarginStr} &middot; ${g.home_score}–${g.away_score}</span>
              </div>`
           : `<div class="card-result"><strong>${g.predicted_winner}</strong> by ${Math.abs(g.predicted_margin)} pts</div>`;
 
