@@ -1,6 +1,6 @@
 from src.data_prep import LEAGUE_AVG_SCORE
 
-ALPHA = 0.25   # EWMA smoothing — higher = more weight on recent games
+ALPHA = 0.18   # EWMA smoothing — higher = more weight on recent games
 
 
 def compute_off_def_ratings(past_games):
