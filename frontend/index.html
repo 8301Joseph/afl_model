@@ -230,7 +230,7 @@
       font-weight: 700;
       letter-spacing: 0;
       flex-shrink: 0;
-      border: 1.5px solid rgba(255,255,255,0.2);
+      border: 2px solid var(--border);
       overflow: hidden;
     }
 
@@ -694,9 +694,9 @@
       const slug = LOGOS[team];
       if (slug) {
         const fb = FALLBACK[team] || { abbr: team.slice(0,3).toUpperCase(), bg: '#64748b' };
-        return `<span class="team-badge logo-badge" style="background:${fb.bg}">` +
+        return `<span class="team-badge logo-badge" style="background:#fff;border-color:${fb.bg}">` +
           `<img src="https://squiggle.com.au/wp-content/themes/squiggle/assets/images/${slug}.png" ` +
-          `alt="${team}" onerror="this.parentElement.innerHTML='${fb.abbr}';this.parentElement.style.color='#fff'">` +
+          `alt="${team}" onerror="this.parentElement.innerHTML='${fb.abbr}';this.parentElement.style.cssText='background:${fb.bg};color:${fb.fg}'">` +
           `</span>`;
       }
       const fb = FALLBACK[team] || { abbr: team.slice(0,3).toUpperCase(), bg: '#64748b', fg: '#fff' };
