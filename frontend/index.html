@@ -220,8 +220,8 @@
     .team.away .team-row { flex-direction: row-reverse; }
 
     .team-badge {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -230,7 +230,15 @@
       font-weight: 700;
       letter-spacing: 0;
       flex-shrink: 0;
-      border: 1.5px solid rgba(255,255,255,0.25);
+      border: 1.5px solid rgba(255,255,255,0.2);
+      overflow: hidden;
+    }
+
+    .logo-badge img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      display: block;
     }
 
     .t-name { font-size: 0.8rem; font-weight: 600; line-height: 1.25; color: var(--text); }
@@ -592,9 +600,9 @@
           <h4>What goes into each prediction?</h4>
           <p>Every prediction is based on five things the model tracks for each team:</p>
           <ul>
-            <li><strong>Overall strength (Elo)</strong> — a running power rating that goes up when you beat strong teams and down when you lose to weaker ones. Bigger wins shift it more.</li>
-            <li><strong>Attack rating</strong> — how many points a team typically scores, weighted toward recent games.</li>
-            <li><strong>Defence rating</strong> — how many points a team typically concedes. Lower is better.</li>
+            <li><strong>Overall strength (Elo)</strong> — a running power rating that goes up when you beat strong teams and down when you lose to weaker ones. Bigger margins shift it more.</li>
+            <li><strong>Attack rating</strong> — how many points a team typically scores, considering how strong the opponent's defence was in the respective games, weighted toward recent games. Higher is better. </li>
+            <li><strong>Defence rating</strong> — how many points a team typically concedes, considering how strong the opponent's attack was in the respective games, weighted toward recent games. Lower is better.</li>
             <li><strong>Home ground advantage</strong> — each team's historical performance boost when playing at their home ground, calculated from past results.</li>
             <li><strong>Head-to-head history</strong> — whether a team has consistently over- or under-performed against a specific opponent relative to what the model expected.</li>
           </ul>
@@ -640,30 +648,59 @@
   </div>
 
   <script>
-    const TEAMS = {
-      'Adelaide Crows':     { abbr: 'ADE', bg: '#002B5C', fg: '#E21937' },
-      'Brisbane Lions':     { abbr: 'BRL', bg: '#7B0036', fg: '#F4B800' },
-      'Carlton':            { abbr: 'CAR', bg: '#002B5C', fg: '#ffffff' },
-      'Collingwood':        { abbr: 'COL', bg: '#1A1A1A', fg: '#ffffff' },
-      'Essendon':           { abbr: 'ESS', bg: '#CC2229', fg: '#1A1A1A' },
-      'Fremantle':          { abbr: 'FRE', bg: '#2C1654', fg: '#ffffff' },
-      'Geelong':            { abbr: 'GEE', bg: '#1C3C6E', fg: '#ffffff' },
-      'Gold Coast Suns':    { abbr: 'GCS', bg: '#E8212B', fg: '#F5A623' },
-      'GWS Giants':         { abbr: 'GWS', bg: '#F47920', fg: '#4B4B4B' },
-      'Hawthorn':           { abbr: 'HAW', bg: '#4D2004', fg: '#FBBF15' },
-      'Melbourne':          { abbr: 'MEL', bg: '#CC2031', fg: '#002E6A' },
-      'North Melbourne':    { abbr: 'NOR', bg: '#002B5C', fg: '#C8102E' },
-      'Port Adelaide':      { abbr: 'POR', bg: '#008AAB', fg: '#1A1A1A' },
-      'Richmond':           { abbr: 'RIC', bg: '#1A1A1A', fg: '#F6C500' },
-      'St Kilda':           { abbr: 'STK', bg: '#ED1C24', fg: '#1A1A1A' },
-      'Sydney Swans':       { abbr: 'SYD', bg: '#EE1C25', fg: '#ffffff' },
-      'West Coast Eagles':  { abbr: 'WCE', bg: '#002B5C', fg: '#F4B800' },
-      'Western Bulldogs':   { abbr: 'WBD', bg: '#0038A8', fg: '#CC2229' },
+    const LOGOS = {
+      'Adelaide Crows':    'Adelaide',
+      'Brisbane Lions':    'Brisbane',
+      'Carlton':           'Carlton',
+      'Collingwood':       'Collingwood',
+      'Essendon':          'Essendon',
+      'Fremantle':         'Fremantle',
+      'Geelong':           'Geelong',
+      'Gold Coast Suns':   'GoldCoast',
+      'GWS Giants':        'Giants',
+      'Hawthorn':          'Hawthorn',
+      'Melbourne':         'Melbourne',
+      'North Melbourne':   'NorthMelbourne',
+      'Port Adelaide':     'PortAdelaide',
+      'Richmond':          'Richmond',
+      'St Kilda':          'StKilda',
+      'Sydney Swans':      'Sydney',
+      'West Coast Eagles': 'WestCoast',
+      'Western Bulldogs':  'Bulldogs',
+    };
+
+    const FALLBACK = {
+      'Adelaide Crows':    { abbr: 'ADE', bg: '#002B5C', fg: '#E21937' },
+      'Brisbane Lions':    { abbr: 'BRL', bg: '#7B0036', fg: '#F4B800' },
+      'Carlton':           { abbr: 'CAR', bg: '#002B5C', fg: '#ffffff' },
+      'Collingwood':       { abbr: 'COL', bg: '#1A1A1A', fg: '#ffffff' },
+      'Essendon':          { abbr: 'ESS', bg: '#CC2229', fg: '#1A1A1A' },
+      'Fremantle':         { abbr: 'FRE', bg: '#2C1654', fg: '#ffffff' },
+      'Geelong':           { abbr: 'GEE', bg: '#1C3C6E', fg: '#ffffff' },
+      'Gold Coast Suns':   { abbr: 'GCS', bg: '#E8212B', fg: '#F5A623' },
+      'GWS Giants':        { abbr: 'GWS', bg: '#F47920', fg: '#4B4B4B' },
+      'Hawthorn':          { abbr: 'HAW', bg: '#4D2004', fg: '#FBBF15' },
+      'Melbourne':         { abbr: 'MEL', bg: '#CC2031', fg: '#002E6A' },
+      'North Melbourne':   { abbr: 'NOR', bg: '#002B5C', fg: '#C8102E' },
+      'Port Adelaide':     { abbr: 'POR', bg: '#008AAB', fg: '#1A1A1A' },
+      'Richmond':          { abbr: 'RIC', bg: '#1A1A1A', fg: '#F6C500' },
+      'St Kilda':          { abbr: 'STK', bg: '#ED1C24', fg: '#1A1A1A' },
+      'Sydney Swans':      { abbr: 'SYD', bg: '#EE1C25', fg: '#ffffff' },
+      'West Coast Eagles': { abbr: 'WCE', bg: '#002B5C', fg: '#F4B800' },
+      'Western Bulldogs':  { abbr: 'WBD', bg: '#0038A8', fg: '#CC2229' },
     };
 
     function badge(team) {
-      const t = TEAMS[team] || { abbr: team.slice(0,3).toUpperCase(), bg: '#64748b', fg: '#fff' };
-      return `<span class="team-badge" style="background:${t.bg};color:${t.fg}">${t.abbr}</span>`;
+      const slug = LOGOS[team];
+      if (slug) {
+        const fb = FALLBACK[team] || { abbr: team.slice(0,3).toUpperCase(), bg: '#64748b' };
+        return `<span class="team-badge logo-badge" style="background:${fb.bg}">` +
+          `<img src="https://squiggle.com.au/wp-content/themes/squiggle/assets/images/${slug}.png" ` +
+          `alt="${team}" onerror="this.parentElement.innerHTML='${fb.abbr}';this.parentElement.style.color='#fff'">` +
+          `</span>`;
+      }
+      const fb = FALLBACK[team] || { abbr: team.slice(0,3).toUpperCase(), bg: '#64748b', fg: '#fff' };
+      return `<span class="team-badge" style="background:${fb.bg};color:${fb.fg}">${fb.abbr}</span>`;
     }
 
     let all = [];
