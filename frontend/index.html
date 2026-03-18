@@ -216,11 +216,28 @@
     .team { display: flex; flex-direction: column; gap: 0.12rem; }
     .team.away { align-items: flex-end; text-align: right; }
 
+    .team-row { display: flex; align-items: center; gap: 0.35rem; }
+    .team.away .team-row { flex-direction: row-reverse; }
+
+    .team-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.52rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      flex-shrink: 0;
+      border: 1.5px solid rgba(255,255,255,0.25);
+    }
+
     .t-name { font-size: 0.8rem; font-weight: 600; line-height: 1.25; color: var(--text); }
     .t-name.tip  { color: var(--accent); }
     .t-name.win  { color: var(--green); }
     .t-name.loss { color: var(--red); }
-    .t-elo { font-size: 0.63rem; color: var(--faint); }
+    .t-elo { font-size: 0.63rem; color: var(--faint); padding-left: 29px; }
 
     .prob-col {
       display: flex;
@@ -494,24 +511,7 @@
       background: var(--border);
     }
 
-    .metric-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
-      margin-top: 0.4rem;
-    }
-
-    .metric-chip {
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 0.5rem 0.65rem;
-    }
-    .metric-chip .mc-label { font-size: 0.63rem; font-weight: 600; color: var(--faint); text-transform: uppercase; letter-spacing: 0.4px; }
-    .metric-chip .mc-val { font-size: 0.78rem; font-weight: 600; color: var(--text); margin-top: 0.1rem; }
-    .metric-chip .mc-desc { font-size: 0.68rem; color: var(--muted); margin-top: 0.15rem; line-height: 1.4; }
-
-    .empty { color: var(--muted); font-style: italic; padding: 1rem; font-size: 0.8rem; }
+.empty { color: var(--muted); font-style: italic; padding: 1rem; font-size: 0.8rem; }
     #err { color: var(--red); padding: 1.5rem; font-size: 0.82rem; }
   </style>
 </head>
@@ -582,90 +582,56 @@
       <div class="faq-body">
 
         <div class="faq-section">
-          <h4>Overview</h4>
-          <p>Every prediction combines three independently-tracked rating systems — Elo, offensive ratings, and defensive ratings — into a Ridge regression model trained on historical AFL data. All three systems update after every game, so predictions adapt to current form throughout the season.</p>
+          <h4>What is this?</h4>
+          <p>Prooty is a statistical model that predicts AFL game outcomes. It learns from years of historical match data and updates automatically after every game — so predictions always reflect current form.</p>
         </div>
 
         <div class="faq-divider"></div>
 
         <div class="faq-section">
-          <h4>Elo Ratings <span class="tag">Core signal</span></h4>
-          <p>A classic chess-style rating system adapted for AFL. Each team starts with a rating of 1500 and gains or loses points based on who they beat and by how much.</p>
-          <div class="metric-grid">
-            <div class="metric-chip">
-              <div class="mc-label">K factor</div>
-              <div class="mc-val">35</div>
-              <div class="mc-desc">Controls how fast ratings shift after each game</div>
-            </div>
-            <div class="metric-chip">
-              <div class="mc-label">Home advantage</div>
-              <div class="mc-val">+60 pts</div>
-              <div class="mc-desc">Added to home team's effective Elo before calculating expected outcome</div>
-            </div>
-            <div class="metric-chip">
-              <div class="mc-label">Margin scaling</div>
-              <div class="mc-val">log(margin)</div>
-              <div class="mc-desc">Bigger wins earn more Elo, but capped at 60pts — garbage time doesn't matter</div>
-            </div>
-            <div class="metric-chip">
-              <div class="mc-label">Season regression</div>
-              <div class="mc-val">25% to 1500</div>
-              <div class="mc-desc">Ratings are pulled back toward average at the start of each season</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-divider"></div>
-
-        <div class="faq-section">
-          <h4>Offensive & Defensive Ratings <span class="tag">Form signal</span></h4>
-          <p>Each team tracks how many points they score (offensive) and concede (defensive) using an exponentially-weighted moving average — so recent games matter more than older ones.</p>
+          <h4>What goes into each prediction?</h4>
+          <p>Every prediction is based on five things the model tracks for each team:</p>
           <ul>
-            <li><strong>Off rating</strong> — average points scored per game, weighted toward recent form</li>
-            <li><strong>Def rating</strong> — average points conceded (lower is better)</li>
-            <li>New teams start at the league average (~88 pts)</li>
-            <li>The smoothing factor (α = 0.18) means ~5 recent games have the most influence</li>
+            <li><strong>Overall strength (Elo)</strong> — a running power rating that goes up when you beat strong teams and down when you lose to weaker ones. Bigger wins shift it more.</li>
+            <li><strong>Attack rating</strong> — how many points a team typically scores, weighted toward recent games.</li>
+            <li><strong>Defence rating</strong> — how many points a team typically concedes. Lower is better.</li>
+            <li><strong>Home ground advantage</strong> — each team's historical performance boost when playing at their home ground, calculated from past results.</li>
+            <li><strong>Head-to-head history</strong> — whether a team has consistently over- or under-performed against a specific opponent relative to what the model expected.</li>
           </ul>
         </div>
 
         <div class="faq-divider"></div>
 
         <div class="faq-section">
-          <h4>Regression Model <span class="tag">Combines everything</span></h4>
-          <p>A Ridge regression is trained on all historical games to predict the final margin (home score − away score). Features fed into the model:</p>
+          <h4>How is the predicted margin calculated?</h4>
+          <p>All five factors above are fed into a statistical model trained on thousands of historical AFL games. It learns how much each factor typically contributes to the final scoreline and uses that to estimate the expected margin for any upcoming matchup.</p>
+          <p style="margin-top:0.5rem;">Recent games carry more weight than older ones — last month matters more than last year.</p>
+        </div>
+
+        <div class="faq-divider"></div>
+
+        <div class="faq-section">
+          <h4>What does the win % mean?</h4>
+          <p>The win percentage reflects how confident the model is, not just who it thinks will win. A 90% means the model is very confident — a 55% means it's basically a coin flip. It's based on the predicted margin and how much AFL games typically vary from what models expect.</p>
+        </div>
+
+        <div class="faq-divider"></div>
+
+        <div class="faq-section">
+          <h4>What is the projected ladder?</h4>
+          <p>The ladder shows <strong>expected wins (xW)</strong> — a projection, not the current standings. For every remaining game, the model calculates each team's chance of winning. Those probabilities are added up across the season to estimate how many wins each team is likely to finish with. Games already played count as full wins or losses.</p>
+        </div>
+
+        <div class="faq-divider"></div>
+
+        <div class="faq-section">
+          <h4>Reading the cards</h4>
           <ul>
-            <li><strong>Elo diff</strong> — home Elo minus away Elo</li>
-            <li><strong>Off diff</strong> — home offensive rating minus away offensive rating</li>
-            <li><strong>Def diff</strong> — away defensive rating minus home defensive rating</li>
-            <li><strong>Home advantage</strong> — per-team home ground boost, learned from historical margins at each venue</li>
-          </ul>
-          <p style="margin-top:0.5rem;">Recent games are weighted more heavily using exponential time decay — games from 2+ seasons ago have roughly 25% of the weight of a current game.</p>
-        </div>
-
-        <div class="faq-divider"></div>
-
-        <div class="faq-section">
-          <h4>Win Probability & Predicted Margin</h4>
-          <p>The model outputs a predicted margin. Win probability is derived from that margin using a normal distribution fitted to historical margin variance — so a larger predicted margin means a higher win probability.</p>
-        </div>
-
-        <div class="faq-divider"></div>
-
-        <div class="faq-section">
-          <h4>Projected Ladder</h4>
-          <p>The ladder shows <strong>expected wins (xW)</strong> — not actual wins. For every remaining game, the model calculates each team's win probability. These probabilities are summed across all remaining games to project how many wins each team is likely to finish with. Actual results already played are included as full wins or losses.</p>
-        </div>
-
-        <div class="faq-divider"></div>
-
-        <div class="faq-section">
-          <h4>Reading the Cards</h4>
-          <ul>
-            <li>The <strong>bar</strong> shows the home/away win split (e.g. 65% / 35%)</li>
-            <li><strong>Blue name</strong> = model's tipped winner (upcoming games)</li>
-            <li><strong>Green name</strong> = actual winner (past games)</li>
-            <li><strong>Red name</strong> = team the model tipped but lost (past games)</li>
-            <li>Past cards show the tipped winner + predicted margin vs the actual result</li>
+            <li>The <strong>bar</strong> shows the home/away win split</li>
+            <li><strong>Blue name</strong> — model's tip for upcoming games</li>
+            <li><strong>Green name</strong> — actual winner of a past game</li>
+            <li><strong>Red name</strong> — who the model tipped but lost</li>
+            <li>Past cards show what the model predicted vs what actually happened</li>
           </ul>
         </div>
 
@@ -674,6 +640,32 @@
   </div>
 
   <script>
+    const TEAMS = {
+      'Adelaide Crows':     { abbr: 'ADE', bg: '#002B5C', fg: '#E21937' },
+      'Brisbane Lions':     { abbr: 'BRL', bg: '#7B0036', fg: '#F4B800' },
+      'Carlton':            { abbr: 'CAR', bg: '#002B5C', fg: '#ffffff' },
+      'Collingwood':        { abbr: 'COL', bg: '#1A1A1A', fg: '#ffffff' },
+      'Essendon':           { abbr: 'ESS', bg: '#CC2229', fg: '#1A1A1A' },
+      'Fremantle':          { abbr: 'FRE', bg: '#2C1654', fg: '#ffffff' },
+      'Geelong':            { abbr: 'GEE', bg: '#1C3C6E', fg: '#ffffff' },
+      'Gold Coast Suns':    { abbr: 'GCS', bg: '#E8212B', fg: '#F5A623' },
+      'GWS Giants':         { abbr: 'GWS', bg: '#F47920', fg: '#4B4B4B' },
+      'Hawthorn':           { abbr: 'HAW', bg: '#4D2004', fg: '#FBBF15' },
+      'Melbourne':          { abbr: 'MEL', bg: '#CC2031', fg: '#002E6A' },
+      'North Melbourne':    { abbr: 'NOR', bg: '#002B5C', fg: '#C8102E' },
+      'Port Adelaide':      { abbr: 'POR', bg: '#008AAB', fg: '#1A1A1A' },
+      'Richmond':           { abbr: 'RIC', bg: '#1A1A1A', fg: '#F6C500' },
+      'St Kilda':           { abbr: 'STK', bg: '#ED1C24', fg: '#1A1A1A' },
+      'Sydney Swans':       { abbr: 'SYD', bg: '#EE1C25', fg: '#ffffff' },
+      'West Coast Eagles':  { abbr: 'WCE', bg: '#002B5C', fg: '#F4B800' },
+      'Western Bulldogs':   { abbr: 'WBD', bg: '#0038A8', fg: '#CC2229' },
+    };
+
+    function badge(team) {
+      const t = TEAMS[team] || { abbr: team.slice(0,3).toUpperCase(), bg: '#64748b', fg: '#fff' };
+      return `<span class="team-badge" style="background:${t.bg};color:${t.fg}">${t.abbr}</span>`;
+    }
+
     let all = [];
     let active = null;
     let ratingsData = [];
@@ -783,7 +775,7 @@
           <div class="card-meta">${fdate(g.date)}${g.location ? ' &middot; ' + g.location : ''}</div>
           <div class="matchup">
             <div class="team home">
-              <span class="t-name${homeCls}">${g.home_team}</span>
+              <div class="team-row">${badge(g.home_team)}<span class="t-name${homeCls}">${g.home_team}</span></div>
               ${isPast ? '' : `<span class="t-elo">Elo ${g.home_elo}</span>`}
             </div>
             <div class="prob-col">
@@ -791,7 +783,7 @@
               <div class="prob-nums"><span>${hp}%</span><span>${ap}%</span></div>
             </div>
             <div class="team away">
-              <span class="t-name${awayCls}">${g.away_team}</span>
+              <div class="team-row">${badge(g.away_team)}<span class="t-name${awayCls}">${g.away_team}</span></div>
               ${isPast ? '' : `<span class="t-elo">Elo ${g.away_elo}</span>`}
             </div>
           </div>
