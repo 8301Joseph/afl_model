@@ -6,7 +6,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 
 DATA_FILE = Path("output/predictions.json")
 FRONTEND = Path("frontend/index.html")
@@ -100,9 +100,9 @@ def _load():
         return json.load(f)
 
 
-@app.get("/", response_class=FileResponse)
+@app.get("/")
 def serve_frontend():
-    return FileResponse(FRONTEND)
+    return FileResponse(FRONTEND, headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
 
 
 @app.get("/health")
