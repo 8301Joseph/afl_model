@@ -816,7 +816,7 @@
              </div>`
           : `<div class="card-footer footer-future">
                <span class="winner-name">${g.predicted_winner}</span>
-               <span class="by-pts">by ${predMargin} pts &middot; ${hp}%</span>
+               <span class="by-pts">by ${predMargin} pts &middot; ${homeTipped ? hp : ap}%</span>
              </div>`;
 
         return `<div class="card${isPast ? ' done' : ''}">
