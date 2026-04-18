@@ -6,6 +6,7 @@ Also called by api.py on a daily schedule and via the /sync endpoint.
 """
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -48,7 +49,11 @@ def fetch_completed(year: int = YEAR) -> dict:
             continue
         home = _to_csv_name(g["hteam"])
         away = _to_csv_name(g["ateam"])
-        result[(home, away)] = g
+        try:
+            rnd = int(g["round"])
+        except (ValueError, TypeError):
+            rnd = g["round"]
+        result[(home, away, rnd)] = g
     return result
 
 
@@ -67,6 +72,7 @@ def sync(year: int = YEAR) -> bool:
     print(f"[sync] {len(completed)} completed games on squiggle.")
 
     df = pd.read_csv(CSV_PATH)
+    now = datetime.now(timezone.utc)
     updated = 0
 
     for i, row in df.iterrows():
@@ -74,7 +80,18 @@ def sync(year: int = YEAR) -> bool:
         if pd.notna(row.get("Result")) and str(row["Result"]).strip():
             continue
 
-        key = (row["Home Team"], row["Away Team"])
+        # Never write a result for a game whose scheduled date is in the future
+        game_date = pd.to_datetime(row["Date"], dayfirst=True)
+        if game_date.tzinfo is None:
+            game_date = game_date.tz_localize("UTC")
+        if game_date > now:
+            continue
+
+        try:
+            rnd = int(row["Round Number"])
+        except (ValueError, TypeError):
+            rnd = row["Round Number"]
+        key = (row["Home Team"], row["Away Team"], rnd)
         if key not in completed:
             continue
 
