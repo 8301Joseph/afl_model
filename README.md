@@ -35,7 +35,7 @@ Target: `margin = home_score - away_score`. Predicted winner is whichever side h
 Win probability is computed from the predicted margin using a fitted normal distribution: `P(home wins) = Φ(predicted_margin / σ)`, where σ is the empirical standard deviation of training residuals. This is better calibrated than Elo-only win probability because it incorporates all model features and the actual spread of historical errors.
 
 ### Head-to-head matchup bias ([src/model.py](src/model.py))
-After fitting the model, residuals are computed per `(home_team, away_team)` pair. The average residual captures systematic over/underperformance in specific matchups beyond what the base model explains. Residuals are shrunk toward zero with a Bayesian prior (k=5 games for 50% weight) to avoid over-fitting thin samples. The adjusted bias is added to the base predicted margin at prediction time.
+After fitting the model, residuals are computed per `(home_team, away_team)` pair. The average residual captures systematic over/underperformance in specific matchups beyond what the base model explains. Residuals are shrunk toward zero with a Bayesian prior (k=5 games for 50% weight) to avoid over-fitting thin samples. The adjusted bias is added **on top of** the base predicted margin at prediction time — it is not a feature inside the Ridge regression, unlike `home_team_advantage`.
 
 ## Data
 
