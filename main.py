@@ -9,49 +9,9 @@ from src.model import build_feature_matrix, train_model, predict_games, compute_
 from src.backtest import run_backtest, print_backtest
 from src.ladder import build_probabilistic_ladder, print_ladder, save_ladder
 
-LOCKED_PREDICTIONS_PATH = "output/locked_predictions.json"
 
-
-def _game_key(home_team, away_team, date_val):
-    return f"{home_team}|{away_team}|{str(date_val)[:10]}"
-
-
-def load_locked_predictions():
-    if os.path.exists(LOCKED_PREDICTIONS_PATH):
-        with open(LOCKED_PREDICTIONS_PATH) as f:
-            return json.load(f)
-    return {}
-
-
-def lock_new_predictions(predictions_df):
-    """Write predictions for upcoming games into the locked store. Never overwrites existing entries."""
-    locked = load_locked_predictions()
-    added = 0
-    for _, row in predictions_df.iterrows():
-        key = _game_key(row["home_team"], row["away_team"], row["date"])
-        if key not in locked:
-            locked[key] = {
-                "predicted_margin": round(float(row["predicted_margin"]), 1),
-                "win_prob_home":    round(float(row["win_prob_home"]), 3),
-                "predicted_winner": row["predicted_winner"],
-                "h2h_bias":         round(float(row["h2h_bias"]), 1),
-                "locked_at":        datetime.utcnow().isoformat() + "Z",
-            }
-            added += 1
-    if added:
-        os.makedirs(os.path.dirname(LOCKED_PREDICTIONS_PATH), exist_ok=True)
-        with open(LOCKED_PREDICTIONS_PATH, "w") as f:
-            json.dump(locked, f, indent=2)
-        print(f"  Locked {added} new prediction(s) → {LOCKED_PREDICTIONS_PATH}")
-    return locked
-
-
-def compute_past_results(feature_df, model, features, margin_std, h2h_residuals, ratings_games, locked_predictions=None):
-    """
-    Compare already-played 2026 games against the predictions that were locked in
-    before each game was played. Falls back to re-predicting only when no locked
-    entry exists (e.g. first-ever run, or games played before this fix was deployed).
-    """
+def compute_past_results(feature_df, model, features, margin_std, h2h_residuals, ratings_games):
+    """Predict already-played 2026 games and compare to actual results."""
     import numpy as np
 
     df_2026 = feature_df[feature_df["season"] == 2026].copy()
@@ -74,18 +34,9 @@ def compute_past_results(feature_df, model, features, margin_std, h2h_residuals,
 
     rows = []
     for i, (_, row) in enumerate(df_2026.iterrows()):
-        key = _game_key(row["home_team"], row["away_team"], row["date"])
-        if locked_predictions and key in locked_predictions:
-            entry = locked_predictions[key]
-            adjusted         = entry["predicted_margin"]
-            wp               = entry["win_prob_home"]
-            predicted_winner = entry["predicted_winner"]
-        else:
-            # Fallback for games played before locking was introduced
-            adjusted         = predicted_margins[i] + h2h_lookup.get((row["home_team"], row["away_team"]), 0.0)
-            wp               = win_prob_from_margin(adjusted, margin_std)
-            predicted_winner = row["home_team"] if adjusted > 0 else row["away_team"]
-
+        adjusted = predicted_margins[i] + h2h_lookup.get((row["home_team"], row["away_team"]), 0.0)
+        wp = win_prob_from_margin(adjusted, margin_std)
+        predicted_winner = row["home_team"] if adjusted > 0 else row["away_team"]
         actual_winner = row["home_team"] if row["margin"] > 0 else row["away_team"]
         rows.append({
             "date":             row["date"],
@@ -208,9 +159,6 @@ def main():
     # --- 7. Predict remaining 2026 games ---
     predictions = predict_games(model, features, current_elo, current_ratings, home_advantages, future_games, h2h_residuals, margin_std=margin_std)
 
-    # Lock in predictions before results arrive — write-once, never overwrite
-    locked_predictions = lock_new_predictions(predictions)
-
     print(f"\n=== 2026 Predictions ({len(predictions)} games) ===")
     for _, row in predictions.iterrows():
         date_str = row["date"].strftime("%d %b") if hasattr(row["date"], "strftime") else str(row["date"])
@@ -228,7 +176,7 @@ def main():
     ladder = build_probabilistic_ladder(ratings_games, predictions)
     print_ladder(ladder)
     save_ladder(ladder)
-    past_results = compute_past_results(feature_df, model, features, margin_std, h2h_residuals, ratings_games, locked_predictions=locked_predictions)
+    past_results = compute_past_results(feature_df, model, features, margin_std, h2h_residuals, ratings_games)
     save_output(predictions, ladder, past_results, current_elo, current_ratings)
 
 
