@@ -1,24 +1,24 @@
-Generated: 2026-03-10
+Generated: 2026-05-02
 
 === Projected 2026 Final Ladder ===
    #  Team                        P     xW    xPts        %
   -------------------------------------------------------
-   1  GWS Giants                 23   16.7    66.7    131.3%
-   2  Brisbane Lions             23   16.6    66.5    133.8%
-   3  Western Bulldogs           23   16.6    66.4    129.4%
-   4  Gold Coast Suns            23   14.7    58.8    119.6%
-   5  Hawthorn                   23   14.3    57.4    117.2%
-   6  Fremantle                  23   13.7    54.7    111.8%
-   7  Geelong Cats               23   13.6    54.3    111.9%
-   8  Collingwood                23   13.5    53.9    109.3%
+   1  Sydney Swans               23   18.9    75.5    156.9%
+   2  Hawthorn                   23   17.9    71.5    132.4%
+   3  Fremantle                  23   16.1    64.6    119.9%
+   4  Brisbane Lions             23   15.7    62.7    127.8%
+   5  Geelong Cats               23   13.8    55.3    113.5%
+   6  Collingwood                23   13.8    55.1    114.6%
+   7  Melbourne                  23   12.5    49.8     99.4%
+   8  Adelaide Crows             23   12.1    48.4    102.1%
   ·······················································
-   9  Sydney Swans               23   13.3    53.1    110.3%
-  10  Adelaide Crows             23   13.0    52.1    108.2%
-  11  Port Adelaide              23   10.1    40.4     93.0%
-  12  Melbourne                  23    9.6    38.3     91.4%
-  13  North Melbourne            23    9.4    37.5     89.3%
-  14  Carlton                    23    8.6    34.6     86.1%
-  15  St Kilda                   23    8.5    34.1     87.7%
-  16  Richmond                   23    5.7    22.9     73.1%
-  17  Essendon                   23    4.8    19.3     69.1%
-  18  West Coast Eagles          23    4.3    17.1     65.1%
+   9  St Kilda                   23   11.8    47.1    108.1%
+  10  Western Bulldogs           23   11.5    46.1     98.1%
+  11  GWS Giants                 23   11.5    45.8     99.8%
+  12  Gold Coast Suns            23   11.3    45.2    101.1%
+  13  Port Adelaide              23   10.6    42.3    103.5%
+  14  North Melbourne            23   10.3    41.3     96.0%
+  15  Carlton                    23    6.9    27.6     84.5%
+  16  Essendon                   23    5.2    20.6     73.9%
+  17  West Coast Eagles          23    4.7    19.0     60.8%
+  18  Richmond                   23    2.5    10.0     58.5%

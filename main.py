@@ -9,8 +9,21 @@ from src.model import build_feature_matrix, train_model, predict_games, compute_
 from src.backtest import run_backtest, print_backtest
 from src.ladder import build_probabilistic_ladder, print_ladder, save_ladder
 
+LOCKED_PREDICTIONS_PATH = "output/locked_predictions.json"
 
-def compute_past_results(feature_df, model, features, margin_std, h2h_residuals, ratings_games):
+
+def _game_key(home_team, away_team, date_val):
+    return f"{home_team}|{away_team}|{str(date_val)[:10]}"
+
+
+def load_locked_predictions():
+    if os.path.exists(LOCKED_PREDICTIONS_PATH):
+        with open(LOCKED_PREDICTIONS_PATH) as f:
+            return json.load(f)
+    return {}
+
+
+def compute_past_results(feature_df, model, features, margin_std, h2h_residuals, ratings_games, locked_predictions=None):
     """Predict already-played 2026 games and compare to actual results."""
     import numpy as np
 
@@ -34,9 +47,17 @@ def compute_past_results(feature_df, model, features, margin_std, h2h_residuals,
 
     rows = []
     for i, (_, row) in enumerate(df_2026.iterrows()):
-        adjusted = predicted_margins[i] + h2h_lookup.get((row["home_team"], row["away_team"]), 0.0)
-        wp = win_prob_from_margin(adjusted, margin_std)
-        predicted_winner = row["home_team"] if adjusted > 0 else row["away_team"]
+        key = _game_key(row["home_team"], row["away_team"], row["date"])
+        if locked_predictions and key in locked_predictions:
+            entry = locked_predictions[key]
+            adjusted         = entry["predicted_margin"]
+            wp               = entry["win_prob_home"]
+            predicted_winner = entry["predicted_winner"]
+        else:
+            adjusted         = predicted_margins[i] + h2h_lookup.get((row["home_team"], row["away_team"]), 0.0)
+            wp               = win_prob_from_margin(adjusted, margin_std)
+            predicted_winner = row["home_team"] if adjusted > 0 else row["away_team"]
+
         actual_winner = row["home_team"] if row["margin"] > 0 else row["away_team"]
         rows.append({
             "date":             row["date"],
@@ -176,7 +197,8 @@ def main():
     ladder = build_probabilistic_ladder(ratings_games, predictions)
     print_ladder(ladder)
     save_ladder(ladder)
-    past_results = compute_past_results(feature_df, model, features, margin_std, h2h_residuals, ratings_games)
+    locked_predictions = load_locked_predictions()
+    past_results = compute_past_results(feature_df, model, features, margin_std, h2h_residuals, ratings_games, locked_predictions=locked_predictions)
     save_output(predictions, ladder, past_results, current_elo, current_ratings)
 
 
