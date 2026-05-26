@@ -29,7 +29,11 @@ AEST_OFFSET = timedelta(hours=10)  # UTC+10 — close enough for scheduling
 
 
 def _next_sync_window(now: datetime):
-    """Return (next_run_utc, retry_hours) for the next sync window."""
+    """
+    Return (next_run_utc, remaining_hours) for the next sync opportunity.
+    If we're already inside a window (e.g. after a server restart), returns
+    now so the loop resumes immediately with the remaining window time.
+    """
     for days_ahead in range(3):
         candidate_utc_day = (now + timedelta(days=days_ahead)).replace(
             hour=0, minute=0, second=0, microsecond=0
@@ -38,11 +42,19 @@ def _next_sync_window(now: datetime):
         start_hour, start_min, retry_hours = (
             _WEEKEND_WINDOW if aest_weekday >= 5 else _WEEKDAY_WINDOW
         )
-        candidate = candidate_utc_day.replace(hour=start_hour, minute=start_min)
-        if candidate > now:
-            return candidate, retry_hours
+        window_start = candidate_utc_day.replace(hour=start_hour, minute=start_min)
+        window_end   = window_start + timedelta(hours=retry_hours)
+
+        if days_ahead == 0 and window_start <= now < window_end:
+            # Already inside a window — resume immediately with remaining time
+            remaining = (window_end - now).total_seconds() / 3600
+            return now, remaining
+
+        if window_start > now:
+            return window_start, retry_hours
+
     # fallback (should never hit)
-    return now + timedelta(hours=1), 4
+    return now + timedelta(hours=1), 4.0
 
 
 async def _run_sync() -> bool:
@@ -56,7 +68,7 @@ async def _daily_sync_loop():
         now = datetime.now(timezone.utc)
         next_run, retry_hours = _next_sync_window(now)
         wait = (next_run - now).total_seconds()
-        print(f"[sync] Next sync in {wait/3600:.1f}h ({next_run.strftime('%Y-%m-%d %H:%M UTC')}, window={retry_hours}h)")
+        print(f"[sync] Next sync in {wait/3600:.1f}h ({next_run.strftime('%Y-%m-%d %H:%M UTC')}, window={retry_hours:.1f}h)")
         await asyncio.sleep(wait)
 
         deadline = datetime.now(timezone.utc) + timedelta(hours=retry_hours)
@@ -64,14 +76,10 @@ async def _daily_sync_loop():
         while datetime.now(timezone.utc) < deadline:
             attempt += 1
             try:
-                found = await _run_sync()
+                await _run_sync()
             except Exception as e:
                 print(f"[sync] Sync error (attempt {attempt}): {e}")
-                found = False
-            if found:
-                print(f"[sync] Results found on attempt {attempt}.")
-                break
-            print(f"[sync] No new results (attempt {attempt}), retrying in {RETRY_INTERVAL_MIN}m...")
+            print(f"[sync] Attempt {attempt} done, next in {RETRY_INTERVAL_MIN}m...")
             await asyncio.sleep(RETRY_INTERVAL_MIN * 60)
 
 
