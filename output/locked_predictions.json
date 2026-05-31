@@ -649,5 +649,40 @@
     "predicted_winner": "Western Bulldogs",
     "h2h_bias": 2.7,
     "locked_at": "2026-05-26T04:25:52.575376+00:00"
+  },
+  "St Kilda|Hawthorn|2026-05-28": {
+    "predicted_margin": -2.9,
+    "win_prob_home": 0.466,
+    "predicted_winner": "Hawthorn",
+    "h2h_bias": -0.3,
+    "locked_at": "2026-05-31T01:33:36.736570+00:00"
+  },
+  "Carlton|Geelong Cats|2026-05-29": {
+    "predicted_margin": -17.5,
+    "win_prob_home": 0.306,
+    "predicted_winner": "Geelong Cats",
+    "h2h_bias": 9.5,
+    "locked_at": "2026-05-31T01:33:36.736579+00:00"
+  },
+  "Sydney Swans|Richmond|2026-05-30": {
+    "predicted_margin": 50.8,
+    "win_prob_home": 0.929,
+    "predicted_winner": "Sydney Swans",
+    "h2h_bias": 0.0,
+    "locked_at": "2026-05-31T01:33:36.736581+00:00"
+  },
+  "Brisbane Lions|Fremantle|2026-05-30": {
+    "predicted_margin": -13.8,
+    "win_prob_home": 0.345,
+    "predicted_winner": "Fremantle",
+    "h2h_bias": 0.0,
+    "locked_at": "2026-05-31T01:33:36.736583+00:00"
+  },
+  "Western Bulldogs|Collingwood|2026-05-30": {
+    "predicted_margin": 4.4,
+    "win_prob_home": 0.551,
+    "predicted_winner": "Western Bulldogs",
+    "h2h_bias": -2.8,
+    "locked_at": "2026-05-31T01:33:36.736585+00:00"
   }
 }
