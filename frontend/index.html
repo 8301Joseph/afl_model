@@ -119,14 +119,16 @@
 
     /* ── Layout ── */
     .wrap {
-      max-width: 960px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 1.25rem 1rem;
+      padding: 1.25rem 1.5rem;
       display: grid;
       grid-template-columns: 1fr 220px;
-      gap: 1.25rem;
+      gap: 1.5rem;
       align-items: start;
     }
+
+    main { min-width: 0; }
 
     @media (max-width: 660px) {
       .wrap {
