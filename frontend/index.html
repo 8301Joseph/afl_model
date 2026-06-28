@@ -357,13 +357,22 @@
       font-size: 0.67rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.3px;
       color: var(--muted);
       border-bottom: 1px solid var(--border);
       background: #f8fafc;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 0.4rem;
+      overflow: hidden;
+    }
+
+    .panel-head-label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
     }
 
     .panel-btn {
@@ -577,7 +586,7 @@
     <aside class="sidebar">
       <div class="panel">
         <div class="panel-head">
-          Projected Ladder
+          <span class="panel-head-label">Projected Ladder</span>
           <button class="panel-btn" onclick="openRatings()">Ratings</button>
         </div>
         <div id="ladder"></div>
