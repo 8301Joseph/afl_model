@@ -327,7 +327,13 @@
     }
 
     /* ── Sidebar ── */
-    .sidebar { position: sticky; top: 1rem; }
+    .sidebar {
+      position: sticky;
+      top: 1rem;
+      max-height: calc(100vh - 2rem);
+      display: flex;
+      flex-direction: column;
+    }
 
     .panel {
       background: var(--surface);
@@ -335,6 +341,15 @@
       border-radius: var(--r);
       overflow: hidden;
       box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      flex: 1;
+    }
+
+    #ladder {
+      overflow-y: auto;
+      flex: 1;
     }
 
     .panel-head {
