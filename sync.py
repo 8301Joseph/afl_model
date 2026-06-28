@@ -33,8 +33,8 @@ def _to_csv_name(squiggle_name: str) -> str:
     return SQUIGGLE_TO_CSV.get(squiggle_name, squiggle_name)
 
 
-def fetch_completed(year: int = YEAR) -> dict:
-    """Return {(csv_home, csv_away): game_dict} for all completed squiggle games."""
+def fetch_all_games(year: int = YEAR) -> list:
+    """Return all squiggle games for the year."""
     resp = requests.get(
         SQUIGGLE_URL,
         params={"q": "games", "year": year},
@@ -42,9 +42,13 @@ def fetch_completed(year: int = YEAR) -> dict:
         timeout=30,
     )
     resp.raise_for_status()
-    games = resp.json().get("games", [])
+    return resp.json().get("games", [])
+
+
+def fetch_completed(year: int = YEAR) -> dict:
+    """Return {(csv_home, csv_away, rnd): game_dict} for all completed squiggle games."""
     result = {}
-    for g in games:
+    for g in fetch_all_games(year):
         if g.get("complete") != 100:
             continue
         if g.get("hscore") is None or g.get("ascore") is None:
@@ -57,6 +61,41 @@ def fetch_completed(year: int = YEAR) -> dict:
             rnd = g["round"]
         result[(home, away, rnd)] = g
     return result
+
+
+def _update_fixture_dates(df: pd.DataFrame, games: list) -> tuple[pd.DataFrame, int]:
+    """
+    Update Date column for unplayed games using Squiggle's unixtime.
+    Returns the updated dataframe and count of changes.
+    """
+    # Build lookup: (csv_home, csv_away, str_round) -> UTC date string
+    fixture = {}
+    for g in games:
+        if not g.get("unixtime"):
+            continue
+        home = _to_csv_name(g["hteam"])
+        away = _to_csv_name(g["ateam"])
+        try:
+            rnd = str(int(g["round"]))
+        except (ValueError, TypeError):
+            rnd = str(g["round"])
+        utc_dt = datetime.fromtimestamp(g["unixtime"], tz=timezone.utc)
+        fixture[(home, away, rnd)] = utc_dt.strftime("%d/%m/%Y %H:%M")
+
+    updated = 0
+    for i, row in df.iterrows():
+        if pd.notna(row.get("Result")) and str(row["Result"]).strip():
+            continue  # already played — don't touch the date
+        try:
+            rnd = str(int(row["Round Number"]))
+        except (ValueError, TypeError):
+            rnd = str(row["Round Number"])
+        key = (row["Home Team"], row["Away Team"], rnd)
+        new_date = fixture.get(key)
+        if new_date and new_date != str(row["Date"]).strip():
+            df.at[i, "Date"] = new_date
+            updated += 1
+    return df, updated
 
 
 def _lock_pre_result_predictions(game_keys: list[tuple]) -> None:
@@ -77,10 +116,13 @@ def _lock_pre_result_predictions(game_keys: list[tuple]) -> None:
         for p in current.get("predictions", [])
     }
 
+    # Normalise CSV team names to match predictions.json names
+    NORM = {"Gold Coast SUNS": "Gold Coast Suns", "GWS GIANTS": "GWS Giants"}
+
     locked = json.load(open(LOCKED_PATH)) if LOCKED_PATH.exists() else {}
     added = 0
     for home, away, date_str in game_keys:
-        key = f"{home}|{away}|{date_str}"
+        key = f"{NORM.get(home, home)}|{NORM.get(away, away)}|{date_str}"
         if key in locked:
             continue
         if key not in lookup:
@@ -105,20 +147,28 @@ def _lock_pre_result_predictions(game_keys: list[tuple]) -> None:
 def sync(year: int = YEAR) -> bool:
     """
     Fetch latest AFL results and update the CSV.
-    Returns True if new results were found and predictions were regenerated.
+    Returns True if any changes were made and predictions were regenerated.
     """
-    print(f"[sync] Fetching {year} results from squiggle...")
+    print(f"[sync] Fetching {year} games from squiggle...")
     try:
-        completed = fetch_completed(year)
+        all_games = fetch_all_games(year)
     except Exception as e:
         print(f"[sync] Fetch failed: {e}")
         return False
 
+    completed = {
+        (_to_csv_name(g["hteam"]), _to_csv_name(g["ateam"]),
+         int(g["round"]) if str(g["round"]).isdigit() else g["round"]): g
+        for g in all_games
+        if g.get("complete") == 100
+        and g.get("hscore") is not None
+        and g.get("ascore") is not None
+    }
     print(f"[sync] {len(completed)} completed games on squiggle.")
 
     df = pd.read_csv(CSV_PATH)
     now = datetime.now(timezone.utc)
-    updated = 0
+    results_added = 0
     games_about_to_finish = []
 
     for i, row in df.iterrows():
@@ -145,21 +195,32 @@ def sync(year: int = YEAR) -> bool:
         date_str = pd.to_datetime(row["Date"], dayfirst=True).strftime("%Y-%m-%d")
         games_about_to_finish.append((row["Home Team"], row["Away Team"], date_str))
         df.at[i, "Result"] = f"{int(g['hscore'])} - {int(g['ascore'])}"
-        updated += 1
+        results_added += 1
         print(
             f"[sync]   Rd {row['Round Number']}: "
             f"{row['Home Team']} {int(g['hscore'])} – {int(g['ascore'])} {row['Away Team']}"
         )
 
-    if updated:
+    # Update fixture dates for unplayed games
+    df, dates_updated = _update_fixture_dates(df, all_games)
+    if dates_updated:
+        print(f"[sync] Updated {dates_updated} fixture date(s).")
+
+    if results_added:
         _lock_pre_result_predictions(games_about_to_finish)
         df.to_csv(CSV_PATH, index=False)
-        print(f"[sync] {updated} new result(s) written. Regenerating predictions...")
+        print(f"[sync] {results_added} new result(s) written. Regenerating predictions...")
+        subprocess.run([sys.executable, "main.py"], check=True)
+        print("[sync] Done.")
+        return True
+    elif dates_updated:
+        df.to_csv(CSV_PATH, index=False)
+        print(f"[sync] Fixture dates updated. Regenerating predictions...")
         subprocess.run([sys.executable, "main.py"], check=True)
         print("[sync] Done.")
         return True
     else:
-        print("[sync] No new results.")
+        print("[sync] No new results or fixture changes.")
         return False
 
 

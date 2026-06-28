@@ -1,4 +1,4 @@
-Generated: 2026-06-28
+Generated: 2026-06-29
 
 === Projected 2026 Final Ladder ===
    #  Team                        P     xW    xPts        %
