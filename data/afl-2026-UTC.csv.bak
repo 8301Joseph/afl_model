@@ -1,0 +1,208 @@
+Match Number,Round Number,Date,Location,Home Team,Away Team,Result
+1,OR,05/03/2026 08:30,SCG,Sydney Swans,Carlton,132 - 69
+2,OR,06/03/2026 09:05,People First Stadium,Gold Coast SUNS,Geelong Cats,125 - 69
+3,OR,07/03/2026 05:15,ENGIE Stadium,GWS GIANTS,Hawthorn,122 - 95
+4,OR,07/03/2026 08:35,Gabba,Brisbane Lions,Western Bulldogs,106 - 111
+5,OR,08/03/2026 08:20,MCG,St Kilda,Collingwood,66 - 78
+6,1,12/03/2026 08:30,MCG,Carlton,Richmond,75 - 71
+7,1,13/03/2026 08:40,MCG,Essendon,Hawthorn,83 - 145
+8,1,14/03/2026 02:15,Marvel Stadium,Western Bulldogs,GWS GIANTS,134 - 53
+9,1,14/03/2026 05:15,GMHBA Stadium,Geelong Cats,Fremantle,110 - 100
+10,1,14/03/2026 08:10,SCG,Sydney Swans,Brisbane Lions,104 - 60
+11,1,14/03/2026 08:35,MCG,Collingwood,Adelaide Crows,79 - 93
+12,1,15/03/2026 02:10,Marvel Stadium,North Melbourne,Port Adelaide,113 - 67
+13,1,15/03/2026 04:15,MCG,Melbourne,St Kilda,120 - 107
+14,1,15/03/2026 07:10,People First Stadium,Gold Coast SUNS,West Coast Eagles,131 - 72
+15,2,19/03/2026 08:30,MCG,Hawthorn,Sydney Swans,99 - 82
+16,2,20/03/2026 08:40,Adelaide Oval,Adelaide Crows,Western Bulldogs,88 - 94
+17,2,21/03/2026 02:15,MCG,Richmond,Gold Coast SUNS,60 - 128
+18,2,21/03/2026 05:15,ENGIE Stadium,GWS GIANTS,St Kilda,74 - 78
+19,2,21/03/2026 08:35,Optus Stadium,Fremantle,Melbourne,118 - 70
+20,2,22/03/2026 04:15,Adelaide Oval,Port Adelaide,Essendon,133 - 70
+21,2,22/03/2026 07:10,Optus Stadium,West Coast Eagles,North Melbourne,111 - 94
+22,3,26/03/2026 08:30,GMHBA Stadium,Geelong Cats,Adelaide Crows,68 - 60
+23,3,27/03/2026 08:40,Marvel Stadium,Collingwood,GWS GIANTS,87 - 54
+24,3,28/03/2026 01:35,Marvel Stadium,St Kilda,Brisbane Lions,80 - 113
+25,3,28/03/2026 05:15,Optus Stadium,Fremantle,Richmond,103 - 43
+26,3,28/03/2026 08:35,Marvel Stadium,Essendon,North Melbourne,69 - 81
+27,3,29/03/2026 01:30,Adelaide Oval,Port Adelaide,West Coast Eagles,90 - 92
+28,3,29/03/2026 04:15,MCG,Carlton,Melbourne,77 - 100
+29,4,02/04/2026 08:30,Gabba,Brisbane Lions,Collingwood,119 - 65
+30,4,03/04/2026 04:15,Marvel Stadium,North Melbourne,Carlton,96 - 86
+31,4,03/04/2026 08:15,Adelaide Oval,Adelaide Crows,Fremantle,76 - 78
+32,4,04/04/2026 05:15,MCG,Richmond,Port Adelaide,48 - 90
+33,4,04/04/2026 08:35,Optus Stadium,West Coast Eagles,Sydney Swans,35 - 163
+34,4,05/04/2026 05:15,MCG,Melbourne,Gold Coast SUNS,109 - 89
+35,4,05/04/2026 09:20,Marvel Stadium,Western Bulldogs,Essendon,99 - 65
+36,4,06/04/2026 05:15,MCG,Hawthorn,Geelong Cats,92 - 91
+37,5,09/04/2026 09:40,Adelaide Oval,Adelaide Crows,Carlton,114 - 86
+38,5,10/04/2026 09:40,Adelaide Oval,Collingwood,Fremantle,39 - 45
+39,5,11/04/2026 02:35,Barossa Park,North Melbourne,Brisbane Lions,66 - 92
+40,5,11/04/2026 03:15,Adelaide Oval,Essendon,Melbourne,113 - 68
+41,5,11/04/2026 06:15,Norwood Oval,Sydney Swans,Gold Coast SUNS,100 - 68
+42,5,11/04/2026 09:35,Adelaide Oval,Hawthorn,Western Bulldogs,104 - 64
+43,5,12/04/2026 02:30,Norwood Oval,Geelong Cats,West Coast Eagles,122 - 76
+44,5,12/04/2026 05:15,Barossa Park,GWS GIANTS,Richmond,131 - 75
+45,5,12/04/2026 09:15,Adelaide Oval,Port Adelaide,St Kilda,67 - 81
+46,6,16/04/2026 09:30,MCG,Carlton,Collingwood,83 - 88
+47,6,17/04/2026 09:20,GMHBA Stadium,Geelong Cats,Western Bulldogs,131 - 56
+48,6,17/04/2026 09:50,SCG,Sydney Swans,GWS GIANTS,107 - 66
+49,6,18/04/2026 03:15,People First Stadium,Gold Coast SUNS,Essendon,119 - 110
+50,6,18/04/2026 06:15,Marvel Stadium,Hawthorn,Port Adelaide,89 - 86
+51,6,18/04/2026 09:35,Adelaide Oval,Adelaide Crows,St Kilda,103 - 102
+52,6,19/04/2026 03:10,Marvel Stadium,North Melbourne,Richmond,130 - 55
+53,6,19/04/2026 05:15,MCG,Melbourne,Brisbane Lions,104 - 102
+54,6,19/04/2026 07:10,Optus Stadium,West Coast Eagles,Fremantle,41 - 97
+55,7,23/04/2026 09:30,Marvel Stadium,Western Bulldogs,Sydney Swans,60 - 126
+56,7,24/04/2026 09:40,MCG,Richmond,Melbourne,72 - 126
+57,7,25/04/2026 02:15,UTAS Stadium,Hawthorn,Gold Coast SUNS,112 - 63
+58,7,25/04/2026 05:15,MCG,Essendon,Collingwood,60 - 137
+59,7,25/04/2026 08:35,Adelaide Oval,Port Adelaide,Geelong Cats,95 - 65
+60,7,25/04/2026 10:15,Optus Stadium,Fremantle,Carlton,103 - 89
+61,7,26/04/2026 03:10,Marvel Stadium,St Kilda,West Coast Eagles,143 - 42
+62,7,26/04/2026 05:15,Gabba,Brisbane Lions,Adelaide Crows,127 - 75
+63,7,26/04/2026 06:40,Corroboree Group Oval Manuka,GWS GIANTS,North Melbourne,105 - 98
+64,8,30/04/2026 09:30,MCG,Collingwood,Hawthorn,93 - 93
+65,8,01/05/2026 09:30,Marvel Stadium,Western Bulldogs,Fremantle,102 - 114
+66,8,01/05/2026 10:10,Adelaide Oval,Adelaide Crows,Port Adelaide,76 - 75
+67,8,02/05/2026 02:35,Marvel Stadium,Essendon,Brisbane Lions,79 - 143
+68,8,02/05/2026 06:15,Optus Stadium,West Coast Eagles,Richmond,88 - 99
+69,8,02/05/2026 06:35,GMHBA Stadium,Geelong Cats,North Melbourne,135 - 86
+70,8,02/05/2026 09:35,Marvel Stadium,Carlton,St Kilda,69 - 108
+71,8,03/05/2026 05:15,SCG,Sydney Swans,Melbourne,131 - 114
+72,8,03/05/2026 09:20,People First Stadium,Gold Coast SUNS,GWS GIANTS,83 - 63
+73,9,07/05/2026 10:10,Optus Stadium,Fremantle,Hawthorn,88 - 73
+74,9,08/05/2026 09:30,Gabba,Brisbane Lions,Carlton,100 - 89
+75,9,08/05/2026 10:10,Adelaide Oval,Port Adelaide,Western Bulldogs,72 - 74
+76,9,09/05/2026 03:15,Marvel Stadium,North Melbourne,Sydney Swans,97 - 105
+77,9,09/05/2026 06:15,ENGIE Stadium,GWS GIANTS,Essendon,103 - 89
+78,9,09/05/2026 09:10,TIO Stadium,Gold Coast SUNS,St Kilda,89 - 60
+79,9,09/05/2026 09:35,MCG,Geelong Cats,Collingwood,122 - 68
+80,9,10/05/2026 03:10,Marvel Stadium,Melbourne,West Coast Eagles,99 - 67
+81,9,10/05/2026 05:15,MCG,Richmond,Adelaide Crows,61 - 98
+82,10,14/05/2026 09:30,Gabba,Brisbane Lions,Geelong Cats,76 - 117
+83,10,15/05/2026 09:30,SCG,Sydney Swans,Collingwood,81 - 75
+84,10,15/05/2026 10:10,TIO Stadium,Gold Coast SUNS,Port Adelaide,98 - 73
+85,10,16/05/2026 03:15,Adelaide Oval,Adelaide Crows,North Melbourne,133 - 65
+86,10,16/05/2026 06:15,MCG,Melbourne,Hawthorn,120 - 81
+87,10,16/05/2026 09:35,Marvel Stadium,Carlton,Western Bulldogs,74 - 62
+88,10,17/05/2026 03:10,MCG,Essendon,Fremantle,61 - 104
+89,10,17/05/2026 05:15,Marvel Stadium,St Kilda,Richmond,109 - 73
+90,10,17/05/2026 08:15,Optus Stadium,West Coast Eagles,GWS GIANTS,88 - 71
+91,11,21/05/2026 09:30,UTAS Stadium,Hawthorn,Adelaide Crows,75 - 66
+92,11,22/05/2026 09:40,MCG,Richmond,Essendon,74 - 56
+93,11,22/05/2026 10:30,Optus Stadium,Fremantle,St Kilda,104 - 74
+94,11,23/05/2026 03:15,Marvel Stadium,North Melbourne,Gold Coast SUNS,111 - 105
+95,11,23/05/2026 06:15,GMHBA Stadium,Geelong Cats,Sydney Swans,107 - 80
+96,11,23/05/2026 06:35,MCG,Collingwood,West Coast Eagles,92 - 82
+97,11,23/05/2026 09:35,Adelaide Oval,Port Adelaide,Carlton,58 - 92
+98,11,24/05/2026 02:30,ENGIE Stadium,GWS GIANTS,Brisbane Lions,166 - 88
+99,11,24/05/2026 05:15,Marvel Stadium,Western Bulldogs,Melbourne,93 - 90
+100,12,28/05/2026 09:30,Marvel Stadium,St Kilda,Hawthorn,67 - 119
+101,12,29/05/2026 09:40,MCG,Carlton,Geelong Cats,88 - 84
+102,12,30/05/2026 03:15,SCG,Sydney Swans,Richmond,170 - 56
+103,12,30/05/2026 06:15,Gabba,Brisbane Lions,Fremantle,78 - 103
+104,12,30/05/2026 09:35,Marvel Stadium,Western Bulldogs,Collingwood,97 - 93
+105,12,31/05/2026 05:15,TIO Traeger Park,Melbourne,GWS GIANTS,70 - 119
+106,12,31/05/2026 09:20,Optus Stadium,West Coast Eagles,Essendon,85 - 55
+107,13,04/06/2026 09:30,Adelaide Oval,Adelaide Crows,Geelong Cats,75 - 74
+108,13,05/06/2026 09:40,MCG,Hawthorn,Western Bulldogs,71 - 77
+109,13,06/06/2026 04:15,Hands Oval,North Melbourne,Fremantle,31 - 155
+110,13,06/06/2026 07:15,People First Stadium,Gold Coast SUNS,Brisbane Lions,75 - 106
+111,13,06/06/2026 10:15,Optus Stadium,West Coast Eagles,Port Adelaide,71 - 77
+112,13,07/06/2026 05:15,SCG,Sydney Swans,St Kilda,104 - 102
+113,13,07/06/2026 09:20,MCG,Essendon,Carlton,67 - 72
+114,13,08/06/2026 05:15,MCG,Collingwood,Melbourne,75 - 83
+115,14,11/06/2026 09:30,Marvel Stadium,Western Bulldogs,Adelaide Crows,64 - 121
+116,14,12/06/2026 09:40,GMHBA Stadium,Geelong Cats,Gold Coast SUNS,105 - 60
+117,14,13/06/2026 03:15,MCG,Melbourne,Essendon,95 - 50
+118,14,13/06/2026 06:15,Optus Stadium,North Melbourne,West Coast Eagles,74 - 73
+119,14,13/06/2026 09:35,Adelaide Oval,Port Adelaide,Sydney Swans,90 - 93
+120,14,14/06/2026 03:10,Ninja Stadium,Richmond,Brisbane Lions,80 - 115
+121,14,14/06/2026 05:15,Marvel Stadium,St Kilda,GWS GIANTS,96 - 88
+122,15,18/06/2026 10:10,Optus Stadium,Fremantle,Geelong Cats,99 - 90
+123,15,19/06/2026 09:40,People First Stadium,Gold Coast SUNS,Hawthorn,97 - 113
+124,15,20/06/2026 03:15,Adelaide Oval,Adelaide Crows,Melbourne,79 - 62
+125,15,20/06/2026 06:15,ENGIE Stadium,GWS GIANTS,Carlton,65 - 88
+126,15,20/06/2026 09:35,MCG,Collingwood,Port Adelaide,78 - 51
+127,15,21/06/2026 03:10,MCG,Richmond,North Melbourne,48 - 73
+128,15,21/06/2026 05:15,Marvel Stadium,St Kilda,Western Bulldogs,61 - 83
+129,16,27/06/2026 02:00,Gabba,Brisbane Lions,Sydney Swans,126 - 83
+130,16,27/06/2026 02:00,Marvel Stadium,Carlton,West Coast Eagles,117 - 64
+131,16,27/06/2026 02:00,MCG,Collingwood,Richmond,106 - 72
+132,16,27/06/2026 02:00,MCG,Hawthorn,GWS GIANTS,96 - 82
+133,16,27/06/2026 02:00,Marvel Stadium,North Melbourne,Essendon,79 - 65
+134,16,27/06/2026 02:30,Adelaide Oval,Port Adelaide,Adelaide Crows,97 - 71
+135,16,27/06/2026 04:00,Optus Stadium,Fremantle,Gold Coast SUNS,80 - 29
+136,17,04/07/2026 02:00,Marvel Stadium,Essendon,St Kilda,
+137,17,04/07/2026 02:00,GMHBA Stadium,Geelong Cats,Brisbane Lions,
+138,17,04/07/2026 02:00,People First Stadium,Gold Coast SUNS,Collingwood,
+139,17,04/07/2026 02:00,Corroboree Group Oval Manuka,GWS GIANTS,Fremantle,
+140,17,04/07/2026 02:00,UTAS Stadium,Hawthorn,Melbourne,
+141,17,04/07/2026 02:00,MCG,Richmond,Carlton,
+142,17,04/07/2026 02:00,SCG,Sydney Swans,Western Bulldogs,
+143,17,04/07/2026 02:30,Adelaide Oval,Port Adelaide,North Melbourne,
+144,17,04/07/2026 04:00,Optus Stadium,West Coast Eagles,Adelaide Crows,
+145,18,11/07/2026 02:00,Gabba,Brisbane Lions,Essendon,
+146,18,11/07/2026 02:00,MCG,Carlton,Hawthorn,
+147,18,11/07/2026 02:00,Marvel Stadium,Collingwood,North Melbourne,
+148,18,11/07/2026 02:00,ENGIE Stadium,GWS GIANTS,Geelong Cats,
+149,18,11/07/2026 02:00,MCG,Melbourne,Richmond,
+150,18,11/07/2026 02:00,Marvel Stadium,St Kilda,Port Adelaide,
+151,18,11/07/2026 02:00,Marvel Stadium,Western Bulldogs,West Coast Eagles,
+152,18,11/07/2026 02:30,Adelaide Oval,Adelaide Crows,Gold Coast SUNS,
+153,18,11/07/2026 04:00,Optus Stadium,Fremantle,Sydney Swans,
+154,19,18/07/2026 02:00,MCG,Collingwood,Carlton,
+155,19,18/07/2026 02:00,Marvel Stadium,Essendon,GWS GIANTS,
+156,19,18/07/2026 02:00,GMHBA Stadium,Geelong Cats,St Kilda,
+157,19,18/07/2026 02:00,People First Stadium,Gold Coast SUNS,Western Bulldogs,
+158,19,18/07/2026 02:00,Marvel Stadium,North Melbourne,Melbourne,
+159,19,18/07/2026 02:00,MCG,Richmond,Hawthorn,
+160,19,18/07/2026 02:00,SCG,Sydney Swans,Adelaide Crows,
+161,19,18/07/2026 02:30,Adelaide Oval,Port Adelaide,Fremantle,
+162,19,18/07/2026 04:00,Optus Stadium,West Coast Eagles,Brisbane Lions,
+163,20,25/07/2026 02:00,Gabba,Brisbane Lions,Port Adelaide,
+164,20,25/07/2026 02:00,Marvel Stadium,Carlton,Gold Coast SUNS,
+165,20,25/07/2026 02:00,ENGIE Stadium,GWS GIANTS,Sydney Swans,
+166,20,25/07/2026 02:00,MCG,Hawthorn,Essendon,
+167,20,25/07/2026 02:00,Marvel Stadium,North Melbourne,St Kilda,
+168,20,25/07/2026 02:00,MCG,Melbourne,Geelong Cats,
+169,20,25/07/2026 02:00,Marvel Stadium,Western Bulldogs,Richmond,
+170,20,25/07/2026 02:30,Adelaide Oval,Adelaide Crows,Collingwood,
+171,20,25/07/2026 04:00,Optus Stadium,Fremantle,West Coast Eagles,
+172,21,01/08/2026 02:00,Marvel Stadium,Carlton,Brisbane Lions,
+173,21,01/08/2026 02:00,MCG,Collingwood,Geelong Cats,
+174,21,01/08/2026 02:00,Marvel Stadium,Essendon,Adelaide Crows,
+175,21,01/08/2026 02:00,People First Stadium,Gold Coast SUNS,Melbourne,
+176,21,01/08/2026 02:00,UTAS Stadium,Hawthorn,North Melbourne,
+177,21,01/08/2026 02:00,MCG,Richmond,West Coast Eagles,
+178,21,01/08/2026 02:00,Marvel Stadium,St Kilda,Sydney Swans,
+179,21,01/08/2026 02:30,Adelaide Oval,Port Adelaide,GWS GIANTS,
+180,21,01/08/2026 04:00,Optus Stadium,Fremantle,Western Bulldogs,
+181,22,08/08/2026 02:00,Gabba,Brisbane Lions,Hawthorn,
+182,22,08/08/2026 02:00,GMHBA Stadium,Geelong Cats,Essendon,
+183,22,08/08/2026 02:00,Corroboree Group Oval Manuka,GWS GIANTS,Gold Coast SUNS,
+184,22,08/08/2026 02:00,MCG,Melbourne,Fremantle,
+185,22,08/08/2026 02:00,Marvel Stadium,St Kilda,Carlton,
+186,22,08/08/2026 02:00,SCG,Sydney Swans,Port Adelaide,
+187,22,08/08/2026 02:00,Marvel Stadium,Western Bulldogs,North Melbourne,
+188,22,08/08/2026 02:30,Adelaide Oval,Adelaide Crows,Richmond,
+189,22,08/08/2026 04:00,Optus Stadium,West Coast Eagles,Collingwood,
+190,23,15/08/2026 02:00,Gabba,Brisbane Lions,Gold Coast SUNS,
+191,23,15/08/2026 02:00,MCG,Essendon,Sydney Swans,
+192,23,15/08/2026 02:00,ENGIE Stadium,GWS GIANTS,West Coast Eagles,
+193,23,15/08/2026 02:00,MCG,Hawthorn,Collingwood,
+194,23,15/08/2026 02:00,Marvel Stadium,North Melbourne,Geelong Cats,
+195,23,15/08/2026 02:00,MCG,Richmond,St Kilda,
+196,23,15/08/2026 02:00,Marvel Stadium,Western Bulldogs,Carlton,
+197,23,15/08/2026 02:30,Adelaide Oval,Port Adelaide,Melbourne,
+198,23,15/08/2026 04:00,Optus Stadium,Fremantle,Adelaide Crows,
+199,24,22/08/2026 02:00,MCG,Collingwood,Brisbane Lions,
+200,24,22/08/2026 02:00,Marvel Stadium,Carlton,Fremantle,
+201,24,22/08/2026 02:00,Marvel Stadium,Essendon,Port Adelaide,
+202,24,22/08/2026 02:00,GMHBA Stadium,Geelong Cats,Richmond,
+203,24,22/08/2026 02:00,MCG,Melbourne,Western Bulldogs,
+204,24,22/08/2026 02:00,Marvel Stadium,St Kilda,Gold Coast SUNS,
+205,24,22/08/2026 02:00,SCG,Sydney Swans,North Melbourne,
+206,24,22/08/2026 02:30,Adelaide Oval,Adelaide Crows,GWS GIANTS,
+207,24,22/08/2026 04:00,Optus Stadium,West Coast Eagles,Hawthorn,
