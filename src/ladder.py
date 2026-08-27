@@ -13,8 +13,11 @@ def _get(standings, team):
 
 
 def _add_completed_games(standings, past_games):
-    """Populate standings with actual 2026 results (binary, settled)."""
-    games_2026 = past_games[past_games["season"] == 2026]
+    """Populate standings with actual 2026 home-and-away results (binary, settled)."""
+    games_2026 = past_games[
+        (past_games["season"] == 2026)
+        & past_games["Round Number"].map(_is_home_and_away_round)
+    ]
     for _, row in games_2026.iterrows():
         home = row["Home Team"]
         away = row["Away Team"]
@@ -63,16 +66,25 @@ def _to_dataframe(standings):
     )
 
 
+def _is_home_and_away_round(round_val):
+    """True for regular-season rounds ('OR', '1'..'24'); False for finals rounds."""
+    round_str = str(round_val)
+    return round_str == "OR" or round_str.isdigit()
+
+
 def build_probabilistic_ladder(past_games, predictions):
     """
-    Projected ladder where future games contribute fractional points:
+    Projected ladder where future home-and-away games contribute fractional points:
       home earns 4 * win_prob_home, away earns 4 * (1 - win_prob_home).
     Reflects uncertainty — a 60/40 game gives each team partial credit.
+    Finals-round games (Wildcard, Finals W1, Semi Finals, etc.) don't affect the
+    home-and-away ladder and are excluded here.
     """
     standings = _init_standings()
     _add_completed_games(standings, past_games)
 
-    for _, row in predictions.iterrows():
+    home_and_away = predictions[predictions["round"].map(_is_home_and_away_round)]
+    for _, row in home_and_away.iterrows():
         home   = row["home_team"]
         away   = row["away_team"]
         p_home = row["win_prob_home"]
