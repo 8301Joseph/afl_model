@@ -1447,5 +1447,82 @@
     "predicted_winner": "Hawthorn",
     "h2h_bias": -6.7,
     "locked_at": "2026-08-27T00:26:41.260993+00:00"
+  },
+  "Western Bulldogs|Collingwood|2026-08-28": {
+    "predicted_margin": 2.7,
+    "win_prob_home": 0.531,
+    "predicted_winner": "Western Bulldogs",
+    "h2h_bias": -2.3,
+    "locked_at": "2026-10-31T00:09:22.369207+00:00"
+  },
+  "Melbourne|Carlton|2026-08-29": {
+    "predicted_margin": -2.3,
+    "win_prob_home": 0.473,
+    "predicted_winner": "Carlton",
+    "h2h_bias": 0.0,
+    "locked_at": "2026-10-31T00:09:22.369214+00:00"
+  },
+  "Fremantle|Hawthorn|2026-09-03": {
+    "predicted_margin": 20.4,
+    "win_prob_home": 0.724,
+    "predicted_winner": "Fremantle",
+    "h2h_bias": 4.9,
+    "locked_at": "2026-10-31T00:09:24.495197+00:00"
+  },
+  "Geelong Cats|Carlton|2026-09-04": {
+    "predicted_margin": 11.7,
+    "win_prob_home": 0.633,
+    "predicted_winner": "Geelong Cats",
+    "h2h_bias": 0.6,
+    "locked_at": "2026-10-31T00:09:24.495203+00:00"
+  },
+  "Sydney Swans|Brisbane Lions|2026-09-05": {
+    "predicted_margin": 2.8,
+    "win_prob_home": 0.533,
+    "predicted_winner": "Sydney Swans",
+    "h2h_bias": 0.7,
+    "locked_at": "2026-10-31T00:09:24.495205+00:00"
+  },
+  "Adelaide Crows|Western Bulldogs|2026-09-05": {
+    "predicted_margin": 23.1,
+    "win_prob_home": 0.75,
+    "predicted_winner": "Adelaide Crows",
+    "h2h_bias": 6.2,
+    "locked_at": "2026-10-31T00:09:24.495206+00:00"
+  },
+  "Fremantle|Geelong Cats|2026-09-11": {
+    "predicted_margin": -12.8,
+    "win_prob_home": 0.355,
+    "predicted_winner": "Geelong Cats",
+    "h2h_bias": -2.9,
+    "locked_at": "2026-10-31T00:09:26.138434+00:00"
+  },
+  "Brisbane Lions|Adelaide Crows|2026-09-12": {
+    "predicted_margin": 14.9,
+    "win_prob_home": 0.668,
+    "predicted_winner": "Brisbane Lions",
+    "h2h_bias": 3.6,
+    "locked_at": "2026-10-31T00:09:26.138442+00:00"
+  },
+  "Sydney Swans|Fremantle|2026-09-18": {
+    "predicted_margin": 18.4,
+    "win_prob_home": 0.704,
+    "predicted_winner": "Sydney Swans",
+    "h2h_bias": -1.9,
+    "locked_at": "2026-10-31T00:09:27.872017+00:00"
+  },
+  "Hawthorn|Brisbane Lions|2026-09-19": {
+    "predicted_margin": -5.6,
+    "win_prob_home": 0.436,
+    "predicted_winner": "Brisbane Lions",
+    "h2h_bias": -0.9,
+    "locked_at": "2026-10-31T00:09:27.872023+00:00"
+  },
+  "Fremantle|Brisbane Lions|2026-09-26": {
+    "predicted_margin": -5.8,
+    "win_prob_home": 0.433,
+    "predicted_winner": "Brisbane Lions",
+    "h2h_bias": -3.5,
+    "locked_at": "2026-10-31T00:09:29.476557+00:00"
   }
 }

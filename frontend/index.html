@@ -773,9 +773,16 @@
           el.style.display = 'inline';
         }
 
-        const pastRounds   = [...new Set(past.map(g => g.round))].sort((a, b) => +a - +b);
-        const futureRounds = [...new Set(future.map(g => g.round))].sort((a, b) => +a - +b);
-        const allRounds    = [...new Set(all.map(g => g.round))].sort((a, b) => +a - +b);
+        // Order rounds by first game date — labels like 'OR' and finals aren't numeric
+        const roundStart = {};
+        all.forEach(g => {
+          const t = new Date(g.date).getTime();
+          if (!(g.round in roundStart) || t < roundStart[g.round]) roundStart[g.round] = t;
+        });
+        const byDate = (a, b) => roundStart[a] - roundStart[b];
+        const pastRounds   = [...new Set(past.map(g => g.round))].sort(byDate);
+        const futureRounds = [...new Set(future.map(g => g.round))].sort(byDate);
+        const allRounds    = [...new Set(all.map(g => g.round))].sort(byDate);
 
         if (allRounds.length) {
           active = futureRounds.length ? futureRounds[0] : allRounds[allRounds.length - 1];
@@ -796,7 +803,7 @@
       document.getElementById('tabs').innerHTML = visibleRounds.map(r => {
         const isPast = pastSet.has(r);
         const cls = ['tab', isPast ? 'past-tab' : '', r === active ? 'active' : ''].filter(Boolean).join(' ');
-        return `<button class="${cls}" onclick="pick('${r}', this)">Rd ${r}</button>`;
+        return `<button class="${cls}" onclick="pick('${r}', this)">${/^\d+$/.test(r) ? 'Rd ' + r : r}</button>`;
       }).join('');
     }
 

@@ -57,10 +57,7 @@ Live at **[prooty.site](https://prooty.site)**
 
 Hosted on Railway. The server runs `main.py` on startup to generate fresh predictions, then serves them via a FastAPI backend. The frontend is a single HTML file served from the same server.
 
-Results are synced automatically from the Squiggle API on a schedule. Each sync reruns `main.py`, updating Elo ratings, off/def ratings, home advantages, H2H biases, and predictions:
-
-- **Weekdays** — starts 11:30pm AEST, retries every 30 min until 8am AEST
-- **Weekends** — starts 1pm AEDT, retries every 30 min until 4am AEDT
+Results are synced automatically from the Squiggle API on server startup and every 30 minutes. Each sync adds any newly scheduled fixtures (e.g. finals once the teams are known), updates fixture times, and writes new results one round at a time, locking each game's prediction before its result is applied. Every change reruns `main.py`, updating Elo ratings, off/def ratings, home advantages, H2H biases, and predictions.
 
 A manual sync can be triggered any time via `POST /sync`.
 

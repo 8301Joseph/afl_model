@@ -2,7 +2,7 @@
 sync.py — fetch latest AFL results from squiggle and regenerate predictions.
 
 Can be run standalone:   python sync.py
-Also called by api.py on a daily schedule and via the /sync endpoint.
+Also called by api.py every 30 minutes and via the /sync endpoint.
 """
 import json
 import subprocess
@@ -29,8 +29,59 @@ SQUIGGLE_TO_CSV = {
 }
 
 
+# Squiggle numbers every round (0 = Opening Round, 25+ = finals); the CSV uses
+# labels for those. Map Squiggle roundname -> CSV "Round Number" label.
+SQUIGGLE_ROUND_LABELS = {
+    "Opening Round":      "OR",
+    "Wildcard Finals":    "Wildcard",
+    "Finals Week 1":      "Finals W1",
+    "Semi-Finals":        "Semi Finals",
+    "Preliminary Finals": "Prelim Finals",
+    "Grand Final":        "Grand Final",
+}
+
+
 def _to_csv_name(squiggle_name: str) -> str:
     return SQUIGGLE_TO_CSV.get(squiggle_name, squiggle_name)
+
+
+def _round_label(g: dict) -> str:
+    """CSV-style round label for a squiggle game (e.g. '12', 'OR', 'Wildcard')."""
+    label = SQUIGGLE_ROUND_LABELS.get(g.get("roundname"))
+    if label:
+        return label
+    try:
+        return str(int(g["round"]))
+    except (ValueError, TypeError):
+        return str(g["round"])
+
+
+def _csv_round(val) -> str:
+    """Normalise a CSV 'Round Number' cell to a string label."""
+    try:
+        return str(int(float(val)))
+    except (ValueError, TypeError):
+        return str(val).strip()
+
+
+def _game_key(g: dict) -> tuple:
+    return (_to_csv_name(g["hteam"]), _to_csv_name(g["ateam"]), _round_label(g))
+
+
+def _row_key(row) -> tuple:
+    return (row["Home Team"], row["Away Team"], _csv_round(row["Round Number"]))
+
+
+def _utc_str(unixtime: int) -> str:
+    return datetime.fromtimestamp(unixtime, tz=timezone.utc).strftime("%d/%m/%Y %H:%M")
+
+
+def _has_result(row) -> bool:
+    return pd.notna(row.get("Result")) and bool(str(row["Result"]).strip())
+
+
+def _run_main() -> None:
+    subprocess.run([sys.executable, "main.py"], check=True)
 
 
 def fetch_all_games(year: int = YEAR) -> list:
@@ -46,21 +97,14 @@ def fetch_all_games(year: int = YEAR) -> list:
 
 
 def fetch_completed(year: int = YEAR) -> dict:
-    """Return {(csv_home, csv_away, rnd): game_dict} for all completed squiggle games."""
-    result = {}
-    for g in fetch_all_games(year):
-        if g.get("complete") != 100:
-            continue
-        if g.get("hscore") is None or g.get("ascore") is None:
-            continue
-        home = _to_csv_name(g["hteam"])
-        away = _to_csv_name(g["ateam"])
-        try:
-            rnd = int(g["round"])
-        except (ValueError, TypeError):
-            rnd = g["round"]
-        result[(home, away, rnd)] = g
-    return result
+    """Return {(csv_home, csv_away, round_label): game_dict} for all completed squiggle games."""
+    return {
+        _game_key(g): g
+        for g in fetch_all_games(year)
+        if g.get("complete") == 100
+        and g.get("hscore") is not None
+        and g.get("ascore") is not None
+    }
 
 
 def _update_fixture_dates(df: pd.DataFrame, games: list) -> tuple[pd.DataFrame, int]:
@@ -68,34 +112,58 @@ def _update_fixture_dates(df: pd.DataFrame, games: list) -> tuple[pd.DataFrame, 
     Update Date column for unplayed games using Squiggle's unixtime.
     Returns the updated dataframe and count of changes.
     """
-    # Build lookup: (csv_home, csv_away, str_round) -> UTC date string
-    fixture = {}
-    for g in games:
-        if not g.get("unixtime"):
-            continue
-        home = _to_csv_name(g["hteam"])
-        away = _to_csv_name(g["ateam"])
-        try:
-            rnd = str(int(g["round"]))
-        except (ValueError, TypeError):
-            rnd = str(g["round"])
-        utc_dt = datetime.fromtimestamp(g["unixtime"], tz=timezone.utc)
-        fixture[(home, away, rnd)] = utc_dt.strftime("%d/%m/%Y %H:%M")
+    fixture = {_game_key(g): _utc_str(g["unixtime"]) for g in games if g.get("unixtime")}
 
     updated = 0
     for i, row in df.iterrows():
-        if pd.notna(row.get("Result")) and str(row["Result"]).strip():
+        if _has_result(row):
             continue  # already played — don't touch the date
-        try:
-            rnd = str(int(row["Round Number"]))
-        except (ValueError, TypeError):
-            rnd = str(row["Round Number"])
-        key = (row["Home Team"], row["Away Team"], rnd)
-        new_date = fixture.get(key)
+        new_date = fixture.get(_row_key(row))
         if new_date and new_date != str(row["Date"]).strip():
             df.at[i, "Date"] = new_date
             updated += 1
     return df, updated
+
+
+def _add_new_fixtures(df: pd.DataFrame, games: list) -> tuple[pd.DataFrame, int]:
+    """
+    Append squiggle games missing from the CSV (e.g. finals, which are only
+    scheduled once the teams are known). Rows are added without a result so
+    predictions are generated (and later locked) before the result is written.
+    """
+    existing = {_row_key(row) for _, row in df.iterrows()}
+
+    # Learn squiggle venue -> CSV location from games already in the CSV
+    csv_locations = {_row_key(row): row["Location"] for _, row in df.iterrows()}
+    venue_map = {}
+    for g in games:
+        loc = csv_locations.get(_game_key(g))
+        if loc and g.get("venue"):
+            venue_map.setdefault(g["venue"], loc)
+
+    new_rows = []
+    next_match = int(df["Match Number"].max()) + 1
+    for g in sorted(games, key=lambda g: g.get("unixtime") or 0):
+        if not g.get("hteam") or not g.get("ateam") or not g.get("unixtime"):
+            continue  # teams not yet decided
+        if _game_key(g) in existing:
+            continue
+        home, away, rnd = _game_key(g)
+        new_rows.append({
+            "Match Number": next_match,
+            "Round Number": rnd,
+            "Date":         _utc_str(g["unixtime"]),
+            "Location":     venue_map.get(g.get("venue"), g.get("venue", "")),
+            "Home Team":    home,
+            "Away Team":    away,
+            "Result":       None,
+        })
+        next_match += 1
+        print(f"[sync]   New fixture: {rnd}: {home} vs {away}")
+
+    if new_rows:
+        df = pd.concat([df, pd.DataFrame(new_rows)], ignore_index=True)
+    return df, len(new_rows)
 
 
 def _lock_pre_result_predictions(game_keys: list[tuple]) -> None:
@@ -146,7 +214,12 @@ def _lock_pre_result_predictions(game_keys: list[tuple]) -> None:
 
 def sync(year: int = YEAR) -> bool:
     """
-    Fetch latest AFL results and update the CSV.
+    Fetch latest AFL results/fixtures and update the CSV.
+
+    Results are applied one round at a time in chronological order, regenerating
+    predictions after each round, so that when several rounds are caught up at
+    once every game's locked prediction only reflects results before it.
+
     Returns True if any changes were made and predictions were regenerated.
     """
     print(f"[sync] Fetching {year} games from squiggle...")
@@ -157,8 +230,7 @@ def sync(year: int = YEAR) -> bool:
         return False
 
     completed = {
-        (_to_csv_name(g["hteam"]), _to_csv_name(g["ateam"]),
-         int(g["round"]) if str(g["round"]).isdigit() else g["round"]): g
+        _game_key(g): g
         for g in all_games
         if g.get("complete") == 100
         and g.get("hscore") is not None
@@ -166,62 +238,57 @@ def sync(year: int = YEAR) -> bool:
     }
     print(f"[sync] {len(completed)} completed games on squiggle.")
 
-    df = pd.read_csv(CSV_PATH)
-    now = datetime.now(timezone.utc)
-    results_added = 0
-    games_about_to_finish = []
+    df = pd.read_csv(CSV_PATH, dtype={"Round Number": str})
+    changed = False
 
-    for i, row in df.iterrows():
-        # Skip rows that already have a result
-        if pd.notna(row.get("Result")) and str(row["Result"]).strip():
-            continue
-
-        # Never write a result for a game whose scheduled date is in the future
-        game_date = pd.to_datetime(row["Date"], dayfirst=True)
-        if game_date.tzinfo is None:
-            game_date = game_date.tz_localize("UTC")
-        if game_date > now:
-            continue
-
-        try:
-            rnd = int(row["Round Number"])
-        except (ValueError, TypeError):
-            rnd = row["Round Number"]
-        key = (row["Home Team"], row["Away Team"], rnd)
-        if key not in completed:
-            continue
-
-        g = completed[key]
-        date_str = pd.to_datetime(row["Date"], dayfirst=True).strftime("%Y-%m-%d")
-        games_about_to_finish.append((row["Home Team"], row["Away Team"], date_str))
-        df.at[i, "Result"] = f"{int(g['hscore'])} - {int(g['ascore'])}"
-        results_added += 1
-        print(
-            f"[sync]   Rd {row['Round Number']}: "
-            f"{row['Home Team']} {int(g['hscore'])} – {int(g['ascore'])} {row['Away Team']}"
-        )
-
-    # Update fixture dates for unplayed games
+    # 1. New fixtures + fixture date changes, then predict them
+    df, fixtures_added = _add_new_fixtures(df, all_games)
     df, dates_updated = _update_fixture_dates(df, all_games)
     if dates_updated:
         print(f"[sync] Updated {dates_updated} fixture date(s).")
+    if fixtures_added or dates_updated:
+        df.to_csv(CSV_PATH, index=False)
+        print("[sync] Fixtures changed. Regenerating predictions...")
+        _run_main()
+        changed = True
 
-    if results_added:
+    # 2. Find unplayed games that now have a result, grouped by round
+    now = datetime.now(timezone.utc)
+    pending = {}  # round label -> [(row index, squiggle game)]
+    for i, row in df.iterrows():
+        if _has_result(row):
+            continue
+        # Never write a result for a game whose scheduled date is in the future
+        game_date = pd.to_datetime(row["Date"], dayfirst=True).tz_localize("UTC")
+        if game_date > now:
+            continue
+        g = completed.get(_row_key(row))
+        if g:
+            pending.setdefault(_csv_round(row["Round Number"]), []).append((i, g))
+
+    # 3. Apply results round-by-round in date order
+    def first_date(rnd):
+        return min(pd.to_datetime(df.at[i, "Date"], dayfirst=True) for i, _ in pending[rnd])
+
+    for rnd in sorted(pending, key=first_date):
+        games_about_to_finish = []
+        for i, g in pending[rnd]:
+            row = df.loc[i]
+            date_str = pd.to_datetime(row["Date"], dayfirst=True).strftime("%Y-%m-%d")
+            games_about_to_finish.append((row["Home Team"], row["Away Team"], date_str))
+            df.at[i, "Result"] = f"{int(g['hscore'])} - {int(g['ascore'])}"
+            print(
+                f"[sync]   Rd {rnd}: "
+                f"{row['Home Team']} {int(g['hscore'])} – {int(g['ascore'])} {row['Away Team']}"
+            )
         _lock_pre_result_predictions(games_about_to_finish)
         df.to_csv(CSV_PATH, index=False)
-        print(f"[sync] {results_added} new result(s) written. Regenerating predictions...")
-        subprocess.run([sys.executable, "main.py"], check=True)
-        print("[sync] Done.")
-        return True
-    elif dates_updated:
-        df.to_csv(CSV_PATH, index=False)
-        print(f"[sync] Fixture dates updated. Regenerating predictions...")
-        subprocess.run([sys.executable, "main.py"], check=True)
-        print("[sync] Done.")
-        return True
-    else:
-        print("[sync] No new results or fixture changes.")
-        return False
+        print(f"[sync] {len(pending[rnd])} new result(s) for Rd {rnd}. Regenerating predictions...")
+        _run_main()
+        changed = True
+
+    print("[sync] Done." if changed else "[sync] No new results or fixture changes.")
+    return changed
 
 
 if __name__ == "__main__":

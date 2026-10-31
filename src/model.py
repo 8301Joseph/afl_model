@@ -193,4 +193,9 @@ def predict_games(model, features, current_elo, current_ratings, home_advantages
             "predicted_winner": home if adjusted_margin > 0 else away,
         })
 
+    if not rows:  # season over — no games left to predict
+        return pd.DataFrame(columns=[
+            "date", "round", "home_team", "away_team", "location", "home_elo", "away_elo",
+            "win_prob_home", "predicted_margin", "h2h_bias", "predicted_winner",
+        ])
     return pd.DataFrame(rows).sort_values("date").reset_index(drop=True)
